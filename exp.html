@@ -1,0 +1,3325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mednifi · Smart Pharmacy Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --dark:#0E0E0C;
+  --dark-2:#1A1A16;
+  --dark-3:#242420;
+  --mid:#3D3D38;
+  --muted:#7A7A72;
+  --cream:#F5F0E8;
+  --cream-2:#FAF8F4;
+  --accent:#3B5E3A;
+  --accent-light:#8BAE87;
+  --accent-border:rgba(139,174,135,0.25);
+  --accent-dim:rgba(59,94,58,0.18);
+  --gold:#C8B89A;
+  --gold-dim:rgba(200,184,154,0.12);
+  --gold-border:rgba(200,184,154,0.22);
+  --red:#B85C5C;
+  --red-dim:rgba(184,92,92,0.12);
+  --border:rgba(245,240,232,0.07);
+  --border-md:rgba(245,240,232,0.12);
+  --border-lg:rgba(245,240,232,0.18);
+
+  --glass:rgba(14,14,12,0.72);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--cream);
+  overflow-x:hidden;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 520px at 20% 20%, rgba(59,94,58,0.12), transparent 60%),
+    radial-gradient(740px 460px at 75% 15%, rgba(200,184,154,0.09), transparent 55%),
+    radial-gradient(780px 540px at 60% 78%, rgba(139,174,135,0.08), transparent 60%);
+}
+
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 3.2rem;
+  background:transparent;
+  border-bottom:none;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.nav-scrolled{
+  padding:0.9rem 3.2rem;
+  background:rgba(14,14,12,0.9);
+  backdrop-filter:blur(20px);
+  border-bottom: 1px solid rgba(245,240,232,0.05);
+}
+.nav-left{display:flex;align-items:center;gap:3rem;min-width:380px;}
+.logo{
+  display:flex;align-items:center;gap:0.85rem;
+  text-decoration:none;
+}
+.logo-leaf{
+  width:42px;height:42px;flex-shrink:0;
+  position:relative;
+}
+.logo-leaf svg{width:100%;height:100%;}
+.logo-text{
+  font-family:'EB Garamond',serif;
+  font-size:2rem;font-weight:500;
+  letter-spacing:0.02em;color:var(--cream);
+}
+.logo-text em{font-style:normal;color:var(--accent-light);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{
+  font-size:0.72rem;letter-spacing:0.13em;text-transform:uppercase;
+  color:rgba(245,240,232,0.5);text-decoration:none;
+  transition:color 0.2s;font-weight:400;
+  position:relative;
+}
+.nav-links a::after{
+  content:'';
+  position:absolute;left:0;bottom:-8px;
+  width:100%;height:1px;
+  background:linear-gradient(90deg, transparent, rgba(200,184,154,0.7), transparent);
+  transform:scaleX(0);
+  transform-origin:center;
+  transition:transform .3s ease;
+  opacity:.85;
+}
+.nav-links a:hover{color:var(--cream);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-right{display:flex;align-items:center;gap:1.25rem;}
+.nav-pill{
+  font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--accent-dim);color:var(--accent-light);
+  border:0.5px solid var(--accent-border);
+  padding:0.28rem 0.7rem;
+}
+.profile-badge{
+  width:34px;height:34px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(139,174,135,0.16);
+  border:0.5px solid rgba(139,174,135,0.32);
+  box-shadow:0 12px 32px rgba(0,0,0,0.22);
+  position:relative;
+  cursor:pointer;
+  transition:transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.profile-badge svg{width:18px;height:18px;opacity:0.9}
+.profile-badge:hover{
+  transform:translateY(-1px);
+  border-color:rgba(200,184,154,0.6);
+  background:rgba(139,174,135,0.22);
+}
+.profile-badge::after{
+  content:'';
+  position:absolute;right:4px;bottom:4px;
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(139,174,135,0.95);
+  box-shadow:0 0 0 2px rgba(14,14,12,0.92);
+}
+.profile-badge.has-alert::after{
+  background:rgba(184,92,92,0.95);
+}
+.notif-wrap{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.notif-panel{
+  position:absolute;
+  top:46px;
+  right:0;
+  width:290px;
+  background:linear-gradient(180deg, rgba(18,22,18,0.98) 0%, rgba(14,16,13,0.98) 100%);
+  border:0.5px solid rgba(139,174,135,0.28);
+  box-shadow:0 24px 70px rgba(0,0,0,0.46);
+  border-radius:10px;
+  padding:0.8rem;
+  z-index:30;
+  display:none;
+}
+.notif-panel.active{display:block;}
+.notif-title{
+  font-size:0.64rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(139,174,135,0.92);
+  margin-bottom:0.55rem;
+}
+.notif-item{
+  border:0.5px solid rgba(245,240,232,0.12);
+  background:rgba(36,40,34,0.72);
+  border-radius:8px;
+  padding:0.56rem 0.62rem;
+  margin-bottom:0.44rem;
+}
+.notif-item:last-child{margin-bottom:0;}
+.notif-item-title{
+  font-size:0.72rem;
+  color:var(--cream);
+  margin-bottom:0.14rem;
+}
+.notif-item-body{
+  font-size:0.66rem;
+  color:rgba(245,240,232,0.72);
+  line-height:1.45;
+}
+.notif-empty{
+  font-size:0.7rem;
+  color:var(--muted);
+  line-height:1.5;
+}
+.notif-more-btn{
+  display:flex;
+  justify-content:center;
+  margin-top:0.58rem;
+  font-size:0.62rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--accent-light);
+  border:0.5px solid rgba(139,174,135,0.36);
+  background:rgba(59,94,58,0.24);
+  border-radius:7px;
+  padding:0.4rem 0.56rem;
+  text-decoration:none;
+}
+.notif-more-btn:hover{opacity:.92;transform:translateY(-1px);}
+.all-alerts-overlay .auth-modal{
+  max-width:880px;
+  padding:2.4rem 2.2rem 2rem;
+}
+.all-alerts-title{
+  font-size:1.15rem;
+  color:var(--cream);
+  margin-bottom:0.25rem;
+}
+.all-alerts-sub{
+  font-size:0.72rem;
+  color:var(--muted);
+  margin-bottom:1rem;
+}
+.all-alerts-table-wrap{
+  max-height:62vh;
+  overflow-y:auto;
+  border:0.5px solid var(--border);
+  background:var(--dark-3);
+}
+.all-alerts-head,.all-alerts-row{
+  display:grid;
+  grid-template-columns:0.9fr 1fr 4fr;
+  gap:0.7rem;
+  align-items:start;
+  padding:0.72rem 0.9rem;
+  border-bottom:0.5px solid var(--border);
+  font-size:0.72rem;
+}
+.all-alerts-head{
+  position:sticky;
+  top:0;
+  background:#141713;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  z-index:2;
+}
+.all-alerts-row:last-child{border-bottom:none;}
+.all-alerts-sev-danger{color:var(--red);}
+.all-alerts-sev-warning{color:var(--gold);}
+.all-alerts-empty{
+  padding:1rem;
+  color:var(--muted);
+  font-size:0.72rem;
+}
+.view-more-alerts{
+  display:inline-flex;
+  margin-top:0.6rem;
+  font-size:0.68rem;
+  color:var(--accent-light);
+  border:0.5px solid var(--accent-border);
+  background:var(--accent-dim);
+  padding:0.32rem 0.58rem;
+  cursor:pointer;
+}
+.view-more-alerts:hover{opacity:.9;}
+.nav-cta{
+  background:var(--cream);color:var(--dark);
+  font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.6rem 1.4rem;text-decoration:none;font-weight:500;
+  transition:all 0.2s;
+}
+.nav-cta:hover{background:var(--gold);transform:translateY(-1px);}
+#inventoryRows{
+  max-height:420px;
+  overflow-y:auto;
+}
+#inventoryRows::-webkit-scrollbar,
+.all-alerts-table-wrap::-webkit-scrollbar{
+  width:6px;
+}
+#inventoryRows::-webkit-scrollbar-thumb,
+.all-alerts-table-wrap::-webkit-scrollbar-thumb{
+  background:var(--border-lg);
+  border-radius:20px;
+}
+
+  /* ══ AUTH MODAL ══ */
+  .auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 11, 9, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 2rem;
+  }
+  .auth-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .auth-modal {
+    background: #121512;
+    border: 1px solid var(--border-md);
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 4rem);
+    padding: 3.5rem 3rem;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .auth-overlay.active .auth-modal {
+    transform: translateY(0);
+  }
+  .auth-modal::-webkit-scrollbar { width: 4px; }
+  .auth-modal::-webkit-scrollbar-track { background: transparent; }
+  .auth-modal::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 10px; }
+  .auth-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--dark-3);
+    border: 1px solid var(--border-md);
+    color: var(--cream);
+    cursor: pointer;
+    font-size: 0.6rem;
+    padding: 0.4rem 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+  .auth-close:hover {
+    background: var(--accent-light);
+    color: var(--dark);
+    border-color: var(--accent-light);
+  }
+  .auth-header { margin-bottom: 2.5rem; text-align: center; }
+  .auth-title { 
+    font-family: 'EB Garamond', serif; 
+    font-size: 2.2rem; 
+    font-weight: 500; 
+    margin-bottom: 0.5rem;
+    color: var(--cream);
+  }
+  .auth-subtitle { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.02em; }
+  .auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .add-med-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+    gap: 1rem;
+    align-items: end;
+  }
+  .price-field .form-input {
+    max-width: 132px;
+  }
+  .form-label { 
+    font-size: 0.65rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.12em; 
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .form-input {
+    background: rgba(245, 240, 232, 0.03);
+    border: 1px solid var(--border-md);
+    padding: 0.9rem 1.1rem;
+    color: var(--cream);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent-light);
+    background: rgba(245, 240, 232, 0.05);
+  }
+  .form-input[type="date"] {
+    color-scheme: dark;
+  }
+  .form-input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+    cursor: pointer;
+  }
+  .auth-submit {
+    margin-top: 1rem;
+    background: var(--cream);
+    color: var(--dark);
+    border: none;
+    padding: 1rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .auth-submit:hover {
+    background: var(--gold);
+    transform: translateY(-2px);
+  }
+  .auth-switch {
+    margin-top: 1.75rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .auth-switch-btn {
+    background: none;
+    border: none;
+    color: var(--accent-light);
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 0.3rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  
+  [data-auth-mode="register"] .login-only,
+  [data-auth-mode="login"] .register-only {
+    display: none;
+  }
+  @media (max-width: 640px) {
+    .auth-overlay {
+      padding: 1rem;
+    }
+    .auth-modal {
+      padding: 3rem 1.25rem 1.5rem;
+    }
+    .add-med-grid {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+    .price-field .form-input {
+      max-width: 100%;
+    }
+  }
+
+/* ══ HERO ══ */
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+  padding-top:0; /* Re-blended with navbar */
+  isolation:isolate;
+  background: var(--dark);
+}
+
+.hero-bg{
+  position:absolute;inset:0;
+  z-index:0;
+}
+.hero-bg img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter: brightness(0.6) contrast(1.1);
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background: linear-gradient(to right, 
+    var(--dark) 0%, 
+    rgba(14, 14, 12, 0.9) 25%, 
+    rgba(14, 14, 12, 0.4) 65%, 
+    transparent 100%);
+  z-index:1;
+}
+
+.hero-content{
+  width:100%;
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 3.2rem;
+  position:relative;
+  z-index:10;
+}
+
+.hero-left{
+  max-width:720px;
+  padding: 8rem 0 4rem 0;
+}
+
+.eyebrow{
+  font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--accent-light);margin-bottom:1.8rem;
+  display:flex;align-items:center;gap:0.75rem;
+  opacity: 0.95;
+}
+.eyebrow::before{
+  content:'';width:2.5rem;height:1px;
+  background:var(--accent-light);display:inline-block;
+}
+h1{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(3.5rem, 6.5vw, 5.8rem);
+  font-weight:400;line-height:1.0;
+  color:var(--cream);margin-bottom:2.2rem;
+  letter-spacing: -0.02em;
+}
+h1 em{font-style:italic;color:var(--accent-light); font-weight: 400;}
+.hero-sub{
+  font-size:1.15rem;color:rgba(245,240,232,0.85);
+  max-width:580px;line-height:1.7;
+  margin-bottom:2.4rem;font-weight:300;
+}
+.hero-btns {
+  display: flex;
+  align-items: center;
+  gap: 2.8rem;
+  margin-bottom: 2rem; /* Significantly reduced gap to proof section */
+}
+.btn-fill{
+  background:var(--accent);color:var(--cream);
+  padding:1.4rem 3.5rem;font-size:0.8rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  text-decoration:none;font-weight:600;
+  border:none;
+  transition:all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 10px 40px rgba(59,94,58,0.25);
+}
+.btn-fill:hover{background:var(--accent-light);color:var(--dark);transform:translateY(-4px); box-shadow: 0 20px 50px rgba(59,94,58,0.35);}
+.btn-outline{
+  color:var(--gold);font-size:0.8rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  text-decoration:none;font-weight:600;
+  display:flex;align-items:center;gap:0.8rem;
+  padding: 1.4rem 0;
+  border-bottom:1px solid rgba(200,184,154,0.3);
+  transition:all 0.3s ease;
+}
+.btn-outline:hover{color:var(--cream);border-bottom-color:var(--cream); transform: translateX(8px);}
+.hero-proof{
+  padding-top:2.2rem;
+  border-top:1px solid rgba(245,240,232,0.1);
+  display:flex;gap:4.5rem;
+}
+.proof-num{
+  font-family:'EB Garamond',serif;
+  font-size:1.9rem;font-weight:500;line-height:1;color:var(--cream);
+}
+.proof-label{
+  font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);margin-top:0.3rem;
+}
+
+/* Dashboard card */
+.dash-card{
+  width:100%;max-width:420px;
+  display:flex;flex-direction:column;gap:0.7rem;
+  position:relative;z-index:2;
+}
+.dash-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.85rem 1.1rem;
+  background:var(--dark-3);
+  border:0.5px solid var(--border-md);
+}
+.dash-title-text{
+  font-family:'EB Garamond',serif;
+  font-size:1rem;color:var(--cream);font-weight:400;letter-spacing:0.02em;
+}
+.live-dot{
+  display:flex;align-items:center;gap:0.4rem;
+  font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-light);
+}
+.live-dot::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--accent-light);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.mc{
+  background:var(--dark-3);
+  border:0.5px solid var(--border);
+  padding:1rem 1.1rem;
+  position:relative;
+  transition:border-color 0.3s;
+}
+.mc:hover{border-color:var(--border-md);}
+.mc-val{
+  font-family:'EB Garamond',serif;
+  font-size:1.9rem;font-weight:500;line-height:1;color:var(--cream);
+}
+.mc-label{
+  font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);margin-top:0.3rem;
+}
+.mc-tag{
+  position:absolute;top:0.7rem;right:0.7rem;
+  font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0.18rem 0.45rem;
+}
+.t-green{background:var(--accent-dim);color:var(--accent-light);}
+.t-gold{background:var(--gold-dim);color:var(--gold);}
+.t-red{background:var(--red-dim);color:var(--red);}
+.mc-accent-green{border-bottom:2px solid var(--accent-light);}
+.mc-accent-gold{border-bottom:2px solid var(--gold);}
+.mc-accent-red{border-bottom:2px solid var(--red);}
+
+.alert-row{
+  background:var(--red-dim);
+  border:0.5px solid rgba(184,92,92,0.2);
+  padding:0.75rem 1rem;
+  display:flex;align-items:flex-start;gap:0.65rem;
+}
+.alert-pip{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red);flex-shrink:0;margin-top:0.3rem;
+  animation:blink 1.5s ease-in-out infinite;
+}
+.alert-text{font-size:0.76rem;color:var(--cream);font-weight:300;line-height:1.5;}
+.alert-text strong{color:var(--red);font-weight:500;}
+
+/* mini bars */
+.mini-chart-wrap{
+  background:var(--dark-3);
+  border:0.5px solid var(--border);
+  padding:0.85rem 1rem;
+}
+.mc-chart-label{
+  font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.65rem;
+}
+.bars{display:flex;align-items:flex-end;gap:3px;height:46px;}
+.b{
+  flex:1;border-radius:1px 1px 0 0;
+  background:rgba(139,174,135,0.15);
+  border:0.5px solid rgba(139,174,135,0.2);
+  transition:background 0.3s;
+}
+.b:hover{background:rgba(139,174,135,0.35);}
+.b.hi{background:rgba(139,174,135,0.38);border-color:rgba(139,174,135,0.5);}
+
+/* batch mini table */
+.batch-wrap{
+  background:var(--dark-3);
+  border:0.5px solid var(--border);
+  padding:0.8rem 1rem;
+}
+.b-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.35rem 0;
+  border-bottom:0.5px solid var(--border);
+  font-size:0.72rem;
+}
+.b-row:last-child{border-bottom:none;}
+.b-name{color:var(--cream);}
+.b-qty{color:var(--muted);font-size:0.65rem;}
+.b-exp{font-size:0.58rem;letter-spacing:0.06em;padding:0.15rem 0.42rem;}
+.exp-ok{background:var(--accent-dim);color:var(--accent-light);}
+.exp-soon{background:var(--gold-dim);color:var(--gold);}
+.exp-bad{background:var(--red-dim);color:var(--red);}
+
+/* ══ TICKER ══ */
+.ticker{
+  background:var(--dark-3);
+  border-top:none;
+  border-bottom:none;
+  padding:0.78rem 0;overflow:hidden;white-space:nowrap;
+  position:relative;
+}
+.ticker::before,.ticker::after{
+  content:'';
+  position:absolute;left:0;right:0;height:1px;
+  pointer-events:none;
+}
+.ticker::before{
+  top:0;
+  background:linear-gradient(90deg, transparent 0%, rgba(139,174,135,0.12) 50%, transparent 100%);
+}
+.ticker::after{
+  bottom:0;
+  background:linear-gradient(90deg, transparent 0%, rgba(139,174,135,0.10) 50%, transparent 100%);
+}
+.ticker-track{display:inline-flex;animation:tick 32s linear infinite;}
+@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ti{
+  font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(139,174,135,0.55);
+  padding:0 2rem;
+  display:inline-flex;align-items:center;gap:2rem;
+}
+.ti::after{content:'·';color:var(--accent-light);}
+
+/* ══ SHARED LAYOUT ══ */
+.wrap{padding:7rem 5rem;}
+.wrap-dark{background:var(--dark-2);}
+.wrap-border{
+  position:relative;
+  border-top:none;
+}
+.wrap-border::before{
+  content:'';
+  position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg, transparent 0%, rgba(245,240,232,0.03) 18%, rgba(245,240,232,0.08) 50%, rgba(245,240,232,0.03) 82%, transparent 100%);
+}
+#dashboard.wrap-border::before{
+  display:none;
+}
+
+.row-header{
+  display:flex;justify-content:space-between;
+  align-items:flex-end;margin-bottom:4rem;
+}
+.sh{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(2rem,3vw,3.2rem);
+  font-weight:400;line-height:1.1;max-width:520px;
+}
+.sh em{font-style:italic;color:var(--accent-light);}
+.sh strong{font-weight:400;color:var(--gold);}
+.label-link{
+  font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;
+  border-bottom:0.5px solid var(--gold-border);
+  padding-bottom:0.15rem;transition:all 0.2s;
+}
+.label-link:hover{color:var(--cream);border-color:var(--cream);}
+.eyebrow-sm{
+  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--accent-light);margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:0.7rem;
+}
+.eyebrow-sm::before{
+  content:'';width:1.5rem;height:0.5px;
+  background:var(--accent-light);display:inline-block;
+}
+.body-text{
+  font-size:0.93rem;color:var(--muted);
+  line-height:1.8;font-weight:300;
+}
+
+/* ══ PROBLEM → SOLUTION ══ */
+.ps-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;border:0.5px solid var(--border);
+}
+.ps-side{padding:3.5rem;}
+.ps-side:first-child{border-right:0.5px solid var(--border);}
+.ps-tag{
+  font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;
+  padding:0.3rem 0.7rem;margin-bottom:1.5rem;display:inline-block;
+}
+.tag-problem{background:var(--red-dim);color:var(--red);}
+.tag-solution{background:var(--accent-dim);color:var(--accent-light);}
+.ps-title{
+  font-family:'EB Garamond',serif;
+  font-size:1.65rem;font-weight:400;line-height:1.2;
+  margin-bottom:1.25rem;
+}
+.ps-body{font-size:0.88rem;color:var(--muted);line-height:1.78;font-weight:300;}
+.ps-list{
+  list-style:none;margin-top:1.5rem;
+  display:flex;flex-direction:column;gap:0.75rem;
+}
+.ps-list li{
+  font-size:0.84rem;color:var(--muted);
+  display:flex;align-items:flex-start;gap:0.75rem;
+  line-height:1.6;font-weight:300;
+}
+.ps-list li::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  flex-shrink:0;margin-top:0.45rem;
+}
+.ps-list.bad li::before{background:var(--red);}
+.ps-list.good li::before{background:var(--accent-light);}
+
+/* ══ HOW IT WORKS ══ */
+.hiw-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6rem;align-items:center;
+}
+.steps{
+  display:flex;flex-direction:column;gap:0;
+  border-left:0.5px solid var(--border-md);
+  padding-left:2.25rem;margin-top:1.5rem;
+}
+.step{
+  padding:1.75rem 0;
+  border-bottom:0.5px solid var(--border);
+  position:relative;cursor:default;
+}
+.step:last-child{border-bottom:none;}
+.step::before{
+  content:'';
+  position:absolute;left:-2.25rem;top:50%;
+  transform:translate(-50%,-50%);
+  width:8px;height:8px;border-radius:50%;
+  background:var(--dark);border:1.5px solid var(--muted);
+  transition:all 0.3s;
+}
+.step:hover::before{border-color:var(--accent-light);background:var(--accent-dim);}
+.step-n{
+  font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--accent-light);margin-bottom:0.45rem;
+}
+.step-title{
+  font-family:'EB Garamond',serif;
+  font-size:1.2rem;font-weight:400;margin-bottom:0.45rem;
+}
+.step-body{font-size:0.82rem;color:var(--muted);line-height:1.7;font-weight:300;}
+
+/* Leaf / organic visual */
+.organic-vis{
+  aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+
+/* ══ BATCH DETAIL SECTION ══ */
+.batch-section{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:6rem;align-items:center;
+}
+.batch-visual{
+  background:var(--dark-3);
+  border:0.5px solid var(--border);
+  padding:2rem;
+}
+.bv-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.25rem;padding-bottom:0.75rem;
+  border-bottom:0.5px solid var(--border);
+}
+.bv-title{
+  font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);
+}
+.bv-count{
+  font-size:0.65rem;letter-spacing:0.08em;color:var(--accent-light);
+}
+.bv-row{
+  display:grid;grid-template-columns:minmax(190px,1.38fr) minmax(100px,0.72fr) 76px 128px minmax(236px,0.92fr);
+  gap:0.8rem;padding:0.9rem 0;
+  border-bottom:0.5px solid var(--border);
+  font-size:0.82rem;align-items:center;
+}
+.bv-row:last-child{border-bottom:none;}
+.bv-row.head{
+  font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);padding:0 0 0.6rem;
+}
+.bv-row > span{
+  min-width:0;
+  display:flex;
+  align-items:center;
+}
+.bv-row > span:first-child{
+  justify-self:start;
+  justify-content:flex-start;
+}
+.bv-row > span:nth-child(2){
+  justify-self:start;
+  justify-content:flex-start;
+}
+.bv-row > span:nth-child(3){
+  justify-self:start;
+  justify-content:flex-start;
+  text-align:left;
+  width:76px;
+  padding-left:0.35rem;
+}
+.bv-row.head > span:nth-child(2){
+  justify-self:start;
+  justify-content:flex-start;
+}
+.bv-row.head > span:nth-child(3){
+  justify-self:start;
+  justify-content:flex-start;
+  width:76px;
+  padding-left:0;
+  letter-spacing:0;
+  transform:none;
+}
+.bv-row > span:last-child{
+  justify-self:end;
+  justify-content:flex-end;
+}
+.bv-row.head > span:last-child{
+  justify-self:stretch;
+  justify-content:center;
+}
+.bv-med{color:var(--cream);font-weight:500;}
+.bv-med{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.bv-batch{color:var(--muted);font-size:0.74rem;font-family:'DM Sans',sans-serif;}
+.bv-qty{
+  color:var(--cream);
+  justify-content:center;
+  padding-right:0;
+  font-size:0.8rem;
+  font-weight:400;
+}
+.bv-pill{
+  font-size:0.62rem;
+  letter-spacing:0.06em;
+  padding:0.26rem 0.56rem;
+  text-align:center;
+  white-space:nowrap;
+  justify-self:start;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+input[type=number]{
+  -moz-appearance:textfield;
+}
+.sell-actions{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:0.65rem;
+  width:auto;
+  min-width:0;
+  white-space:nowrap;
+  margin-left:0.5rem;
+}
+.sell-count{
+  height:36px;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0 0.7rem;
+  border:1px solid rgba(245,240,232,0.08);
+  border-radius:8px;
+  background:rgba(26,26,22,0.4);
+  color:var(--muted);
+  font-size:0.64rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  transition:border-color 0.3s ease;
+}
+.sell-count:focus-within{border-color:var(--accent);}
+.sell-qty-input{
+  width:40px;
+  height:24px;
+  background:transparent;
+  border:1px solid rgba(245,240,232,0.15);
+  color:var(--cream);
+  border-radius:4px;
+  padding:0;
+  text-align:center;
+  font-size:0.82rem;
+  font-weight:600;
+  outline:none;
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.3s ease;
+}
+.sell-qty-input:focus{
+  border-color:var(--accent);
+  background:rgba(139,174,135,0.05);
+}
+.btn-sell,
+.btn-delete{
+  height:36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  font-size:0.66rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.165,0.84,0.44,1);
+  border:none;
+  padding:0 0.95rem;
+}
+.btn-sell{
+  background:var(--accent);
+  color:var(--cream);
+  box-shadow:0 4px 15px rgba(59,94,58,0.2);
+}
+.btn-sell:hover{
+  background:var(--accent-light);
+  color:var(--dark);
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(59,94,58,0.3);
+}
+.btn-delete{
+  background:rgba(184,92,92,0.15);
+  color:#f3b6b6;
+  border:1px solid rgba(184,92,92,0.2);
+}
+.btn-delete:hover{
+  background:var(--red);
+  color:var(--cream);
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(184,92,92,0.25);
+}
+@media (max-width: 900px){
+  .bv-row{
+    grid-template-columns:minmax(150px,1.18fr) minmax(86px,0.64fr) 68px 112px minmax(208px,0.88fr);
+    gap:0.65rem;
+  }
+  .bv-row > span:nth-child(3){
+    width:68px;
+    padding-left:0.25rem;
+  }
+  .bv-row.head > span:nth-child(3){
+    width:68px;
+    padding-left:0;
+    transform:none;
+  }
+  .sell-actions{
+    gap:0.5rem;
+    margin-left:0.3rem;
+  }
+  .sell-count{
+    padding:0 0.58rem;
+  }
+  .btn-sell,
+  .btn-delete{
+    padding:0 0.72rem;
+  }
+}
+
+/* ══ ALERTS SECTION ══ */
+.alerts-layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5rem;align-items:start;
+}
+.alert-cards{display:flex;flex-direction:column;gap:0.85rem;}
+.ac{
+  border:0.5px solid;padding:1.3rem 1.5rem;
+  position:relative;overflow:hidden;
+  transition:transform 0.2s;cursor:default;
+}
+.ac:hover{transform:translateX(5px);}
+.ac::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:3px;
+}
+.ac.danger{background:var(--red-dim);border-color:rgba(184,92,92,0.18);}
+.ac.danger::before{background:var(--red);}
+.ac.warning{background:var(--gold-dim);border-color:rgba(200,184,154,0.18);}
+.ac.warning::before{background:var(--gold);}
+.ac.ok{background:var(--accent-dim);border-color:var(--accent-border);}
+.ac.ok::before{background:var(--accent-light);}
+.ac-head{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;margin-bottom:0.4rem;
+}
+.ac-title{font-size:0.88rem;font-weight:500;color:var(--cream);}
+.ac-time{font-size:0.62rem;color:var(--muted);white-space:nowrap;}
+.ac-body{font-size:0.78rem;color:var(--muted);line-height:1.6;font-weight:300;}
+.ac-tag{
+  font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.18rem 0.5rem;margin-top:0.65rem;display:inline-block;
+}
+.ac-tag.d{background:var(--red-dim);color:var(--red);}
+.ac-tag.w{background:var(--gold-dim);color:var(--gold);}
+.ac-tag.o{background:var(--accent-dim);color:var(--accent-light);}
+
+/* ══ TESTIMONIAL / TRUST ══ */
+.trust-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:0.5px solid var(--border);
+}
+.trust-card{
+  background:var(--dark);
+  padding:2.5rem 2rem;
+  transition:background 0.3s;cursor:default;
+}
+.trust-card:hover{background:var(--dark-2);}
+.trust-quote{
+  font-family:'EB Garamond',serif;
+  font-size:1.1rem;font-style:italic;
+  color:var(--cream);line-height:1.6;margin-bottom:1.25rem;
+}
+.trust-author{
+  font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);
+}
+.trust-stars{display:flex;gap:3px;margin-bottom:1rem;}
+.star{
+  width:9px;height:9px;
+  background:var(--accent-light);
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+}
+
+/* ══ STATS BAR ══ */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:0.5px solid var(--border);
+}
+.sb{
+  padding:3rem 2rem;
+  border-right:0.5px solid var(--border);
+  transition:background 0.3s;
+}
+.sb:last-child{border-right:none;}
+.sb:hover{background:var(--dark-2);}
+.sb-num{
+  font-family:'EB Garamond',serif;
+  font-size:2.8rem;font-weight:400;line-height:1;color:var(--cream);
+}
+.sb-unit{color:var(--accent-light);}
+.sb-label{
+  font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);margin-top:0.5rem;
+}
+.sb-desc{
+  font-size:0.78rem;color:var(--muted);
+  margin-top:0.6rem;line-height:1.65;font-weight:300;
+}
+
+/* ══ CTA ══ */
+.cta-wrap{
+  padding:9rem 5rem;
+  background:var(--cream-2);color:var(--dark);
+  text-align:center;position:relative;overflow:hidden;
+}
+/* subtle leaf shadow */
+.cta-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 110%,rgba(59,94,58,0.09) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cta-eyebrow{
+  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:center;gap:0.75rem;
+}
+.cta-eyebrow::before,.cta-eyebrow::after{
+  content:'';width:2rem;height:0.5px;
+  background:var(--accent);display:inline-block;
+}
+.cta-title{
+  font-family:'EB Garamond',serif;
+  font-size:clamp(2.4rem,4.5vw,4.5rem);
+  font-weight:400;line-height:1.07;
+  color:var(--dark);margin-bottom:1.5rem;position:relative;
+}
+.cta-title em{font-style:italic;color:var(--accent);}
+.cta-body{
+  font-size:1rem;color:#4A4A44;
+  max-width:460px;margin:0 auto 3rem;
+  font-weight:300;line-height:1.75;position:relative;
+}
+.btn-dark{
+  background:var(--dark);color:var(--cream);
+  padding:1.1rem 3rem;font-size:0.76rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  text-decoration:none;font-weight:500;
+  display:inline-block;transition:all 0.25s;position:relative;
+}
+.btn-dark:hover{background:var(--dark-3);transform:translateY(-2px);}
+
+/* ══ FOOTER ══ */
+footer{
+  background:var(--dark-3);
+  padding:4.5rem 5rem 2.5rem;
+  border-top:0.5px solid var(--border);
+}
+.ft{
+  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;
+  gap:3rem;margin-bottom:4rem;
+}
+.fl-wrap{display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;}
+.fl-text{
+  font-family:'EB Garamond',serif;
+  font-size:1.3rem;color:var(--cream);font-weight:500;
+}
+.fl-text em{font-style:normal;color:var(--accent-light);}
+.ft-tag{
+  font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--accent-light);margin-bottom:1.1rem;
+}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:0.6rem;}
+.ft-links a{
+  font-size:0.8rem;color:var(--muted);text-decoration:none;
+  transition:color 0.2s;font-weight:300;
+}
+.ft-links a:hover{color:var(--cream);}
+.ft-tagline{font-size:0.8rem;color:var(--muted);line-height:1.72;font-weight:300;max-width:255px;}
+.ft-bottom{
+  border-top:0.5px solid var(--border);padding-top:1.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ft-legal{font-size:0.68rem;color:var(--muted);}
+.ft-social{display:flex;gap:1.5rem;}
+.ft-social a{
+  font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;transition:color 0.2s;
+}
+.ft-social a:hover{color:var(--cream);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(26px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.fu{opacity:0;animation:fadeUp 0.9s ease forwards;}
+.d1{animation-delay:0.1s;}.d2{animation-delay:0.25s;}
+.d3{animation-delay:0.4s;}.d4{animation-delay:0.55s;}
+
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spinR{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.025);}}
+
+/* ══ NEW LAYOUT STYLES ══ */
+.animation-placeholder {
+  width: 100%; max-width: 460px; aspect-ratio: 1;
+  background: rgba(14,14,12,0.12);
+  border: 0.5px solid rgba(245,240,232,0.14);
+  border-radius: 26px;
+  position: relative; z-index: 2;
+  overflow: hidden;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.28);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+.hero-orbit{
+  position:absolute;inset:-20%;
+  background:
+    radial-gradient(circle at 30% 35%, rgba(139,174,135,0.22) 0%, transparent 55%),
+    radial-gradient(circle at 74% 24%, rgba(200,184,154,0.13) 0%, transparent 55%),
+    radial-gradient(circle at 45% 78%, rgba(59,94,58,0.18) 0%, transparent 60%);
+  filter:blur(10px);
+  transform:translate3d(0,0,0);
+  animation:breathe 4.8s cubic-bezier(.22,.9,.27,1) infinite;
+  opacity:0.28;
+}
+.hero-orbit::before{
+  content:'';
+  position:absolute;inset:18%;
+  border-radius:999px;
+  border:0.5px solid rgba(245,240,232,0.12);
+  background:linear-gradient(145deg, rgba(245,240,232,0.05), rgba(245,240,232,0.015));
+  box-shadow:inset 0 1px 0 rgba(245,240,232,0.06);
+}
+.hero-metrics{
+  position:absolute;inset:auto 22px 22px 22px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  z-index:2;
+}
+.hm{
+  background:rgba(14,14,12,0.26);
+  border:0.5px solid rgba(245,240,232,0.18);
+  padding:12px 12px 11px;
+  backdrop-filter:blur(18px);
+  transition:transform .25s ease, border-color .25s ease;
+}
+.hm:hover{transform:translateY(-2px);border-color:rgba(139,174,135,0.35);}
+
+@media (max-width: 980px){
+  .hero{padding-top:96px; flex-direction: column; text-align: center;}
+  .hero-left{
+    padding:4.6rem 1.4rem 2.6rem 1.4rem;
+    max-width:none;
+    align-items: center;
+    flex: none;
+  }
+  .hero-right {
+    width: 100%;
+    height: 400px;
+    margin-top: 2rem;
+    flex: none;
+    margin-left: 0;
+    overflow: hidden;
+  }
+  .hero-leaf {
+    width: 100%;
+    height: 100%;
+  }
+  .hero-btns {
+    justify-content: center;
+  }
+  .hero-proof {
+    justify-content: center;
+  }
+  .eyebrow {
+    justify-content: center;
+  }
+  nav{padding:0.82rem 1.15rem;}
+  .nav-links{display:none;}
+  .nav-left{min-width:auto;}
+}
+.hm-k{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,0.55);}
+.hm-v{font-family:'EB Garamond',serif;font-size:1.35rem;line-height:1.05;margin-top:8px;color:var(--cream);}
+.hm-v em{font-style:italic;color:var(--accent-light);}
+.dashboard-section {
+  display: flex; flex-direction: column; gap: 2rem;
+}
+.dashboard-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+}
+.dashboard-full-chart {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;
+}
+.inventory-section {
+  display: flex; flex-direction: column; gap: 2rem;
+}
+.inventory-top{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+  margin-bottom:1.35rem;
+}
+.inventory-top .inv-left{max-width:560px;}
+.inventory-top .inv-right{
+  flex:1;
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-end;
+  gap:1.25rem;
+  padding-bottom:0.15rem;
+}
+.inventory-top .btn-fill{
+  margin-top:0 !important;
+  width:auto !important;
+  white-space:nowrap;
+  padding:0 2.4rem;
+  font-size:0.75rem;
+  height:48px;
+  display:flex;
+  align-items:center;
+}
+.inventory-card{
+  background:linear-gradient(180deg, rgba(36,36,32,0.75) 0%, rgba(36,36,32,0.6) 100%);
+  border:0.5px solid var(--border);
+  padding:1.35rem;
+  box-shadow:0 18px 60px rgba(0,0,0,0.28);
+}
+.batch-visual{transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;}
+.batch-visual:hover{transform:translateY(-2px);border-color:var(--border-lg);box-shadow:0 26px 90px rgba(0,0,0,0.34);}
+.sales-section {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+.sales-chart-wrap {
+  background: var(--dark-3); border: 0.5px solid var(--border); padding: 2rem;
+}
+.sales-bars {
+  display: flex; align-items: flex-end; gap: 8px; height: 180px; margin-top: 1.5rem;
+}
+.sales-bar-col {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+.sales-bar {
+  width: 100%; border-radius: 2px 2px 0 0;
+  background: rgba(139,174,135,0.15); border: 0.5px solid rgba(139,174,135,0.2);
+  transition: background 0.3s;
+}
+.sales-bar:hover { background: rgba(139,174,135,0.35); }
+.sales-bar.profit { background: rgba(139,174,135,0.4); border-color: rgba(139,174,135,0.6); }
+.sales-bar.loss { background: rgba(184,92,92,0.3); border-color: rgba(184,92,92,0.5); }
+.sales-lbl { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.suppliers-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+}
+.supplier-card {
+  background: var(--dark-3); border: 0.5px solid var(--border);
+  padding: 1.5rem; transition: transform 0.2s, border-color 0.2s;
+}
+.supplier-card:hover {
+  transform: translateY(-3px); border-color: var(--accent-light);
+}
+.supp-name {
+  font-family: 'EB Garamond', serif; font-size: 1.3rem; color: var(--cream); margin-bottom: 0.2rem;
+}
+.supp-cat {
+  font-size: 0.65rem; color: var(--accent-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; display: block;
+}
+.supp-detail {
+  display: flex; justify-content: space-between; font-size: 0.76rem;
+  padding: 0.4rem 0; border-bottom: 0.5px solid var(--border-md);
+}
+.supp-detail:last-child { border-bottom: none; }
+.supp-lbl { color: var(--muted); }
+.supp-val { color: var(--cream); font-weight: 400; }
+
+/* ══ UI ENHANCEMENTS & IMAGE GRAPH STYLES ══ */
+
+/* Medicine Search Bar (Pill style) */
+.search-container {
+  position: relative; width: 100%; max-width: 420px; margin-bottom: 0;
+}
+.search-icon {
+  position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; color: var(--accent-light); pointer-events: none;
+}
+.search-input {
+  width: 100%; background: var(--dark-3); border: 1px solid var(--border-md);
+  padding: 0.9rem 3rem 0.9rem 1.5rem; border-radius: 30px;
+  color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-container{transition:transform .3s ease, filter .3s ease;}
+.search-container:focus-within{transform:translateY(-1px);filter:drop-shadow(0 18px 48px rgba(0,0,0,0.28));}
+.search-input:focus {
+  outline: none; border-color: var(--accent-light);
+  box-shadow: 0 0 0 4px rgba(139,174,135,0.1);
+}
+.search-input::placeholder { color: var(--muted); letter-spacing: 0.05em; }
+
+/* Dashboard Image 1 Area Graph */
+.dashboard-img1-container {
+  width: 100%; height: 260px; margin-top: 1rem; position: relative;
+  background: var(--dark-2); padding: 1.5rem 1rem 2rem 2.5rem; border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.dashboard-img1-container svg { width: 100%; height: 100%; overflow: visible; }
+.img1-gridline { stroke: rgba(245,240,232,0.05); stroke-width: 1; }
+.img1-axislbl { fill: var(--muted); font-size: 10px; font-family: 'DM Sans', sans-serif; }
+.img1-axislbl.y-lbl { text-anchor: end; }
+.img1-axislbl.x-lbl { text-anchor: middle; }
+.img1-line { fill: none; stroke: var(--accent-light); stroke-width: 2.5; }
+.img1-area { fill: url(#img1Gradient); }
+.img1-point { fill: var(--dark-3); stroke: var(--accent-light); stroke-width: 2; r: 5; }
+
+/* Sales Image 2 Growth Chart */
+.sales-img2-container {
+  width: 100%; position: relative; background: var(--dark-2);
+  padding: 2.5rem; border-radius: 8px; border: 1px solid var(--border);
+  display: flex; gap: 2rem;
+}
+.sales-img2-main { flex: 1; position: relative; }
+.sales-img2-side { width: 160px; display: flex; flex-direction: column; gap: 1.5rem; }
+
+.img2-bar-wrap { display: flex; align-items: flex-end; justify-content: space-between; height: 180px; margin-top: 2rem; border-bottom: 2px solid var(--dark-3); }
+.img2-bar-col { display: flex; flex-direction: column; align-items: center; width: 16%; position: relative; }
+.img2-val { font-size: 1.1rem; color: var(--cream); font-weight: 500; margin-bottom: 0.5rem; font-family: 'EB Garamond', serif; }
+.img2-bar { width: 100%; background: var(--mid); border-radius: 2px 2px 0 0; }
+.img2-bar.hi { background: var(--accent-light); }
+.img2-bar.darker { background: var(--dark-3); }
+
+.img2-arrow { position: absolute; top: -30px; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.img2-arrow-path { fill: none; stroke: var(--cream); stroke-width: 6; }
+.img2-arrow-head { fill: var(--cream); }
+
+/* Sales Side Metrics */
+.img2-stat-box { background: var(--dark-3); padding: 0.8rem; border-radius: 6px; }
+.img2-stat-row { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.3rem; }
+.img2-stat-row:last-child { margin-bottom: 0; }
+.img2-stat-lbl { color: var(--muted); }
+.img2-stat-val { color: var(--accent-light); }
+
+.img2-circle-metric { display: flex; align-items: center; gap: 1rem; }
+.img2-circle { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 500; }
+.img2-circle.green { background: rgba(139,174,135,0.15); color: var(--accent-light); border: 2px solid var(--accent-light); }
+.img2-circle.dark { background: var(--dark-3); color: var(--cream); border: 2px solid var(--mid); }
+.img2-circle-lbl { font-size: 0.7rem; color: var(--muted); line-height: 1.3; }
+
+/* Removed the row hovers to keep things solid and fast as requested */
+.bv-row { padding: 0.8rem 1rem; border-radius: 6px; border-bottom: 1px solid var(--border); }
+.bv-row.head { padding: 0 1rem 0.6rem; border-bottom: 2px solid var(--dark-3); }
+
+/* ══ CHARTS + MOTION POLISH ══ */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:1ms !important;animation-iteration-count:1 !important;transition-duration:1ms !important;}
+}
+
+.chart-shell{
+  background:linear-gradient(180deg, rgba(26,26,22,0.9) 0%, rgba(26,26,22,0.72) 100%);
+  border:0.5px solid var(--border);
+  padding:1.35rem 1.35rem 1.05rem;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,0.34);
+}
+.chart-shell::before{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(700px 260px at 25% -10%, rgba(139,174,135,0.12), transparent 55%),
+    radial-gradient(540px 220px at 75% 0%, rgba(200,184,154,0.08), transparent 60%);
+  pointer-events:none;
+}
+.chart-head{
+  position:relative;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
+  margin-bottom:12px;
+}
+.chart-title{
+  font-family:'EB Garamond',serif;
+  font-size:1.15rem;
+  letter-spacing:.02em;
+  line-height:1.15;
+}
+.chart-sub{
+  font-size:.72rem;
+  color:rgba(245,240,232,0.55);
+  font-weight:300;
+  max-width:64ch;
+  margin-top:4px;
+}
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.chip{
+  font-size:.58rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:.28rem .55rem;
+  border:0.5px solid rgba(245,240,232,0.14);
+  background:rgba(14,14,12,0.42);
+  color:rgba(245,240,232,0.74);
+}
+.chip strong{font-weight:500;color:var(--cream);}
+.chart-canvas{position:relative;z-index:1;}
+
+.apexcharts-tooltip{
+  background:rgba(14,14,12,0.92) !important;
+  border:0.5px solid rgba(245,240,232,0.16) !important;
+  backdrop-filter:blur(16px) !important;
+  box-shadow:0 22px 90px rgba(0,0,0,0.55) !important;
+}
+.apexcharts-tooltip-title{
+  background:transparent !important;
+  border-bottom:0.5px solid rgba(245,240,232,0.12) !important;
+  color:rgba(245,240,232,0.78) !important;
+  font-family:'DM Sans',sans-serif !important;
+  letter-spacing:.06em !important;
+  text-transform:uppercase !important;
+  font-size:.62rem !important;
+}
+.apexcharts-legend-text{color:rgba(245,240,232,0.72) !important;}
+
+.mc{
+  border-radius:12px;
+  transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+  box-shadow:0 1px 0 rgba(245,240,232,0.03);
+}
+.mc:hover{transform:translateY(-3px);border-color:var(--border-lg);box-shadow:0 26px 90px rgba(0,0,0,0.42);}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .9s ease, transform .9s ease;}
+.reveal.is-in{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-left">
+    <a class="logo" href="#">
+      <div class="logo-leaf" aria-hidden="true">
+        <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2 C13 2 22 8 22 16 C22 21 18 24 13 24 C8 24 4 21 4 16 C4 8 13 2 13 2Z"
+            fill="rgba(59,94,58,0.55)" stroke="rgba(139,174,135,0.85)" stroke-width="0.85"/>
+          <path d="M13 6 C13 6 19 11 19 16 C19 19.5 16.5 22 13 22 C9.5 22 7 19.5 7 16 C7 11 13 6 13 6Z"
+            fill="rgba(59,94,58,0.35)"/>
+          <line x1="13" y1="7" x2="13" y2="23" stroke="rgba(200,184,154,0.25)" stroke-width="0.55"/>
+          <line x1="9" y1="14" x2="17" y2="18" stroke="rgba(139,174,135,0.28)" stroke-width="0.55"/>
+          <line x1="9" y1="18" x2="17" y2="14" stroke="rgba(139,174,135,0.22)" stroke-width="0.55"/>
+        </svg>
+      </div>
+      <span class="logo-text">Med<em>nifi</em></span>
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#dashboard" class="private-nav-link">Dashboard</a></li>
+    <li><a href="#inventory" class="private-nav-link">Inventory</a></li>
+    <li><a href="#sales" class="private-nav-link">Sales</a></li>
+    <li><a href="#suppliers" class="private-nav-link">Suppliers</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="notif-wrap">
+      <button class="profile-badge" id="notifBell" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3.5C9.1 3.5 6.8 5.8 6.8 8.7V11.6C6.8 12.6 6.5 13.6 5.9 14.4L4.8 15.9C4.2 16.7 4.8 17.8 5.8 17.8H18.2C19.2 17.8 19.8 16.7 19.2 15.9L18.1 14.4C17.5 13.6 17.2 12.6 17.2 11.6V8.7C17.2 5.8 14.9 3.5 12 3.5Z" stroke="currentColor" stroke-width="1.4" style="color: rgba(245,240,232,0.86)"/>
+          <path d="M9.8 19.2C10.1 20.3 11 21 12 21C13 21 13.9 20.3 14.2 19.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" style="color: rgba(245,240,232,0.75)"/>
+        </svg>
+      </button>
+      <div class="notif-panel" id="notifPanel" aria-live="polite">
+        <div class="notif-title">Live Alerts</div>
+        <div id="notifList" class="notif-empty">No active alerts.</div>
+      </div>
+    </div>
+    <a href="#" class="nav-cta auth-trigger" data-mode="login">Log in</a>
+  </div>
+</nav>
+
+<!-- ══ AUTH MODAL ══ -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal" id="authModal" data-auth-mode="login">
+    <button class="auth-close" id="closeAuth">Close</button>
+    <div class="auth-header">
+      <h2 class="auth-title login-only">Welcome Back</h2>
+      <h2 class="auth-title register-only">Create Account</h2>
+      <p class="auth-subtitle login-only">Access your pharmacy dashboard</p>
+      <p class="auth-subtitle register-only">Start managing your pharmacy smarter</p>
+    </div>
+    <form class="auth-form" id="authForm">
+      <div class="form-group register-only">
+        <label class="form-label">Pharmacy Name</label>
+        <input type="text" id="regName" class="form-input" placeholder="e.g. Central Care Pharmacy">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="authEmail" class="form-input" placeholder="name@pharmacy.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="authPassword" class="form-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+      </div>
+      <button type="submit" class="auth-submit">
+        <span class="login-only">Sign In</span>
+        <span class="register-only">Register Now</span>
+      </button>
+    </form>
+    <div class="auth-switch">
+      <span class="login-only">Don't have an account?</span>
+      <span class="register-only">Already have an account?</span>
+      <button class="auth-switch-btn" id="authSwitch">
+        <span class="login-only">Create one</span>
+        <span class="register-only">Sign in</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="auth-overlay" id="addMedOverlay">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeModal('addMedOverlay')">Close</button>
+    <div class="auth-header">
+      <h2 class="auth-title">Add Medicine Batch</h2>
+      <p class="auth-subtitle">Log new inventory arrival</p>
+    </div>
+    <form class="auth-form" id="addMedForm">
+      <div class="form-group">
+        <label class="form-label">Medicine Name</label>
+        <input type="text" id="medName" class="form-input" placeholder="e.g. Paracetamol" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Batch Number</label>
+        <input type="text" id="medBatch" class="form-input" placeholder="e.g. P-102" required>
+      </div>
+      <div class="form-group add-med-grid">
+        <div>
+          <label class="form-label">Stock Qty</label>
+          <input type="number" id="medQty" class="form-input" placeholder="100" required>
+        </div>
+        <div class="price-field">
+          <label class="form-label">Price/Unit</label>
+          <input type="number" step="0.01" id="medPrice" class="form-input" placeholder="10.00" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expiry Date</label>
+        <input type="date" id="medExpiry" class="form-input" required>
+      </div>
+      <button type="submit" class="auth-submit">Add to Inventory</button>
+    </form>
+  </div>
+</div>
+
+<div class="auth-overlay all-alerts-overlay" id="allAlertsOverlay">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeModal('allAlertsOverlay')">Close</button>
+    <div class="all-alerts-title">All Alerts</div>
+    <div class="all-alerts-sub">Scrollable list of all current expiry and low-stock alerts.</div>
+    <div class="all-alerts-table-wrap">
+      <div class="all-alerts-head">
+        <span>Severity</span><span>Type</span><span>Message</span>
+      </div>
+      <div id="allAlertsRows">
+        <div class="all-alerts-row">
+          <span class="all-alerts-sev-danger">Critical</span>
+          <span>Expiry Risk</span>
+          <span>Amoxicillin 500mg batch B-2291 expires in 6 days. 240 units at risk.</span>
+        </div>
+        <div class="all-alerts-row">
+          <span class="all-alerts-sev-warning">Warning</span>
+          <span>Low Stock</span>
+          <span>Metformin 850mg is approaching its review window and should be checked soon.</span>
+        </div>
+        <div class="all-alerts-row">
+          <span class="all-alerts-sev-warning">Warning</span>
+          <span>Reorder</span>
+          <span>One or more fast-moving items have dropped below safe operating stock levels.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="pexels-olena-2429655-4058750.jpg" alt=""/>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="eyebrow fu">Smart Pharmacy Operations</div>
+      <h1 class="fu d1">
+        Pharmacy safety,<br/><em>finally</em> built in.
+      </h1>
+      <p class="hero-sub fu d2">
+        Mednifi helps pharmacy owners and staff manage medicines safely and efficiently — tracking every batch, monitoring every expiry, and alerting your team before problems occur.
+      </p>
+      <div class="hero-btns fu d3">
+        <a href="#" class="btn-fill auth-trigger" id="heroCtaBtn" data-mode="register">Register Now</a>
+        <a href="#hiw" class="btn-outline">How It Works →</a>
+      </div>
+      <div class="hero-proof fu d4">
+        <div>
+          <div class="proof-num">Batch</div>
+          <div class="proof-label">Level Tracking</div>
+        </div>
+        <div>
+          <div class="proof-num">Zero</div>
+          <div class="proof-label">Expired Sales Risk</div>
+        </div>
+        <div>
+          <div class="proof-num">Real-Time</div>
+          <div class="proof-label">Alerts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ti">Batch-Level Tracking</span>
+    <span class="ti">Expiry Monitoring</span>
+    <span class="ti">Low Stock Alerts</span>
+    <span class="ti">Sales Recording</span>
+    <span class="ti">Medicine Management</span>
+    <span class="ti">Supplier Tracking</span>
+    <span class="ti">Inventory Analytics</span>
+    <span class="ti">Zero Expired Sales</span>
+    <span class="ti">Batch-Level Tracking</span>
+    <span class="ti">Expiry Monitoring</span>
+    <span class="ti">Low Stock Alerts</span>
+    <span class="ti">Sales Recording</span>
+    <span class="ti">Medicine Management</span>
+    <span class="ti">Supplier Tracking</span>
+    <span class="ti">Inventory Analytics</span>
+    <span class="ti">Zero Expired Sales</span>
+  </div>
+</div>
+
+<!-- ══ PROBLEM / SOLUTION ══ -->
+<section class="wrap wrap-dark wrap-border">
+  <div style="margin-bottom:3rem;">
+    <div class="eyebrow-sm">The Problem We Solve</div>
+    <h2 class="sh" style="max-width:640px;">
+      Pharmacies lose money and<br/>put patients at risk — <em>silently.</em>
+    </h2>
+  </div>
+  <div class="ps-grid reveal">
+    <div class="ps-side">
+      <span class="ps-tag tag-problem">Without Mednifi</span>
+      <div class="ps-title">Reactive. Manual. Risky.</div>
+      <p class="ps-body">Most pharmacies rely on manual shelf checks and spreadsheets. By the time a problem surfaces, it is already a loss or a patient safety incident.</p>
+      <ul class="ps-list bad">
+        <li>Expired medicines discovered on shelves after they have been dispensed</li>
+        <li>Stockouts found only when a customer asks for a medicine</li>
+        <li>No visibility into which batches are nearing expiry</li>
+        <li>Hours lost to manual inventory counts every week</li>
+      </ul>
+    </div>
+    <div class="ps-side">
+      <span class="ps-tag tag-solution">With Mednifi</span>
+      <div class="ps-title">Proactive. Intelligent. Safe.</div>
+      <p class="ps-body">Mednifi creates a system that continuously monitors inventory, surfaces risks early, and ensures your team always knows what is on the shelf and for how long.</p>
+      <ul class="ps-list good">
+        <li>Expiry alerts fire 30 days and 7 days before any batch expires</li>
+        <li>Low stock thresholds trigger before shortages go critical</li>
+        <li>Every sale reduces the correct batch, with no manual calculation</li>
+        <li>Full batch history visible at a glance, without shelf counting</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section id="hiw" class="wrap wrap-border">
+  <div class="hiw-grid">
+    <div>
+      <div class="eyebrow-sm">How Mednifi Works</div>
+      <h2 class="sh">From stock entry<br/>to <em>smart decisions.</em></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">01 · Add</div>
+          <div class="step-title">Every batch entered with full detail</div>
+          <div class="step-body">When stock arrives, staff log the medicine, batch number, quantity, purchase date, and expiry. Each batch lives independently and is never merged or averaged.</div>
+        </div>
+        <div class="step">
+          <div class="step-n">02 · Monitor</div>
+          <div class="step-title">Continuous expiry and stock tracking</div>
+          <div class="step-body">Mednifi watches every batch in real time. As stock moves and dates approach, the system calculates risk and queues the right alert before action is needed.</div>
+        </div>
+        <div class="step">
+          <div class="step-n">03 · Alert</div>
+          <div class="step-title">Your team is notified early — not late</div>
+          <div class="step-body">Alerts fire at 30 days and 7 days before expiry. Low stock triggers before the shelf is empty. No surprises and no last-minute scrambling.</div>
+        </div>
+        <div class="step">
+          <div class="step-n">04 · Sell</div>
+          <div class="step-title">Sales reduce the right batch automatically</div>
+          <div class="step-body">When a sale is recorded, Mednifi deducts from the correct batch and prevents selling more than available. Patient safety is enforced in software.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="organic-vis reveal">
+      <svg width="100%" viewBox="0 0 420 460" fill="none" style="max-height:460px;overflow:visible;">
+        <circle cx="210" cy="230" r="188" stroke="rgba(139,174,135,0.05)" stroke-width="0.5"/>
+        <circle cx="210" cy="230" r="152" stroke="rgba(139,174,135,0.05)" stroke-width="0.5"/>
+        <circle cx="210" cy="230" r="114" stroke="rgba(139,174,135,0.06)" stroke-width="0.5"/>
+        <circle cx="210" cy="230" r="76"  stroke="rgba(139,174,135,0.08)" stroke-width="0.5"/>
+
+        <g style="transform-origin:210px 230px;animation:spin 38s linear infinite;">
+          <g transform="translate(210,42)">
+            <rect x="-26" y="-12" width="52" height="24" rx="1"
+              fill="rgba(59,94,58,0.35)" stroke="rgba(139,174,135,0.45)" stroke-width="0.5"/>
+            <text text-anchor="middle" y="5.5" font-family="'DM Sans',sans-serif"
+              font-size="7.5" letter-spacing="1.5" fill="rgba(139,174,135,0.9)">BATCH</text>
+          </g>
+          <g transform="translate(398,230)">
+            <rect x="-26" y="-12" width="52" height="24" rx="1"
+              fill="rgba(200,184,154,0.2)" stroke="rgba(200,184,154,0.4)" stroke-width="0.5"/>
+            <text text-anchor="middle" y="5.5" font-family="'DM Sans',sans-serif"
+              font-size="7.5" letter-spacing="1.5" fill="rgba(200,184,154,0.9)">STOCK</text>
+          </g>
+          <g transform="translate(210,418)">
+            <rect x="-24" y="-12" width="48" height="24" rx="1"
+              fill="rgba(184,92,92,0.2)" stroke="rgba(184,92,92,0.4)" stroke-width="0.5"/>
+            <text text-anchor="middle" y="5.5" font-family="'DM Sans',sans-serif"
+              font-size="7.5" letter-spacing="1.5" fill="rgba(184,92,92,0.9)">ALERT</text>
+          </g>
+          <g transform="translate(22,230)">
+            <rect x="-22" y="-12" width="44" height="24" rx="1"
+              fill="rgba(59,94,58,0.25)" stroke="rgba(139,174,135,0.35)" stroke-width="0.5"/>
+            <text text-anchor="middle" y="5.5" font-family="'DM Sans',sans-serif"
+              font-size="7.5" letter-spacing="1.5" fill="rgba(139,174,135,0.8)">SALE</text>
+          </g>
+        </g>
+
+        <g style="transform-origin:210px 230px;animation:spinR 24s linear infinite;">
+          <circle cx="210" cy="78"  r="4.5" fill="rgba(139,174,135,0.4)"/>
+          <circle cx="342" cy="230" r="4.5" fill="rgba(200,184,154,0.38)"/>
+          <circle cx="210" cy="382" r="4.5" fill="rgba(184,92,92,0.38)"/>
+          <circle cx="78"  cy="230" r="4.5" fill="rgba(139,174,135,0.35)"/>
+        </g>
+
+        <path d="M210 150 C210 150 255 177 255 228 C255 268 236 292 210 297 C184 292 165 268 165 228 C165 177 210 150 210 150Z"
+          fill="rgba(59,94,58,0.18)" stroke="rgba(139,174,135,0.28)" stroke-width="0.75"/>
+        <path d="M210 167 C210 167 242 190 242 228 C242 256 228 276 210 280 C192 276 178 256 178 228 C178 190 210 167 210 167Z"
+          fill="rgba(59,94,58,0.15)"/>
+        <line x1="210" y1="168" x2="210" y2="280" stroke="rgba(139,174,135,0.22)" stroke-width="0.5"/>
+        <line x1="184" y1="207" x2="236" y2="249" stroke="rgba(139,174,135,0.13)" stroke-width="0.5"/>
+        <line x1="236" y1="207" x2="184" y2="249" stroke="rgba(139,174,135,0.1)"  stroke-width="0.5"/>
+        <rect x="203" y="210" width="14" height="34" rx="1.5"
+          fill="none" stroke="rgba(139,174,135,0.4)" stroke-width="0.75"/>
+        <rect x="194" y="219" width="32" height="14" rx="1.5"
+          fill="none" stroke="rgba(139,174,135,0.4)" stroke-width="0.75"/>
+        <rect x="204" y="211" width="12" height="32" rx="1" fill="rgba(139,174,135,0.1)"/>
+        <rect x="195" y="220" width="30" height="12" rx="1" fill="rgba(139,174,135,0.1)"/>
+        <circle cx="210" cy="226" r="5" fill="rgba(139,174,135,0.5)"/>
+        <circle cx="210" cy="226" r="2.5" fill="rgba(139,174,135,0.85)"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ALERTS ══ -->
+<section class="wrap wrap-dark wrap-border">
+  <div class="alerts-layout">
+    <div>
+      <div class="eyebrow-sm">Alert System</div>
+      <h2 class="sh" style="margin-bottom:1.4rem;">Your team knows<br/><em>before</em> it becomes<br/>a problem.</h2>
+      <p class="body-text" style="max-width:420px;margin-bottom:1.75rem;">
+        Mednifi monitors inventory behavior continuously and surfaces early-warning signals before disruptions happen. The examples shown here use sample data to demonstrate how alerts can prioritize risk and guide action.
+      </p>
+    </div>
+    <div class="alert-cards">
+      <div class="ac danger">
+        <div class="ac-head">
+          <div class="ac-title">Expiry Risk Alert</div>
+          <div class="ac-time">Example</div>
+        </div>
+        <div class="ac-body">The system flags batches that are near expiry so the team can prioritize them before any dispensing risk.</div>
+        <span class="ac-tag d">Critical &middot; Expiring</span>
+      </div>
+      <div class="ac warning">
+        <div class="ac-head">
+          <div class="ac-title">Low Stock Alert</div>
+          <div class="ac-time">Example</div>
+        </div>
+        <div class="ac-body">Low-stock warnings are raised early, helping staff reorder before shelves run out.</div>
+        <span class="ac-tag w">Warning &middot; Reorder</span>
+      </div>
+      <div class="ac ok">
+        <div class="ac-head">
+          <div class="ac-title">Inventory Healthy</div>
+          <div class="ac-time">Example</div>
+        </div>
+        <div class="ac-body">If no critical issues are detected, Mednifi confirms healthy status for clear operational confidence.</div>
+        <span class="ac-tag o">Resolved &middot; Healthy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DASHBOARD ══ -->
+<section id="dashboard" class="wrap wrap-dark wrap-border private-section">
+  <div style="margin-bottom:3rem;">
+    <div class="eyebrow-sm">Dashboard</div>
+    <h2 class="sh">Operations at a <em>glance.</em></h2>
+  </div>
+  <div class="dashboard-section">
+      <div class="dashboard-grid">
+        <div class="mc mc-accent-green">
+          <div class="mc-val" id="dashTotalMeds">1,284</div>
+          <div class="mc-label">Total Medicines</div>
+          <span class="mc-tag t-green">Inventory</span>
+        </div>
+        <div class="mc mc-accent-green">
+          <div class="mc-val" id="dashTotalStock">48,720</div>
+          <div class="mc-label">Units In Stock</div>
+          <span class="mc-tag t-green">Available</span>
+        </div>
+      <div class="mc mc-accent-red">
+        <div class="mc-val" id="dashLowStock">14</div>
+        <div class="mc-label">Low Stock Alerts</div>
+        <span class="mc-tag t-red">Act Now</span>
+      </div>
+      <div class="mc mc-accent-gold">
+        <div class="mc-val" id="dashExpiring">31</div>
+        <div class="mc-label">Expiring &lt;30 Days</div>
+        <span class="mc-tag t-gold">Review</span>
+      </div>
+    </div>
+    
+    <div class="dashboard-full-chart">
+      <div class="chart-shell reveal">
+        <div class="chart-head">
+          <div>
+            <div class="chart-title">Inventory health (7 days)</div>
+            <div class="chart-sub">Simple operational signal: how many items are expiring soon and how many are low-stock.</div>
+          </div>
+          <div class="chip-row" aria-label="Inventory KPIs">
+            <div class="chip">expiring <strong id="chipExpiring">31</strong></div>
+            <div class="chip">low stock <strong id="chipLowStock">14</strong></div>
+            <div class="chip">healthy <strong id="chipHealthy">1,239</strong></div>
+          </div>
+        </div>
+        <div id="dashboardOpsChart" class="chart-canvas" style="height:270px;"></div>
+        <noscript><div style="padding:0.75rem 0;color:var(--muted);font-size:0.8rem;">Enable JavaScript to view the chart.</div></noscript>
+      </div>
+      <div class="batch-wrap">
+        <div class="mc-chart-label" style="margin-bottom:0.8rem;">Critical Alerts</div>
+        <div id="dashboardAlertsContainer">
+          <div class="alert-row" style="margin-bottom: 0.5rem;">
+            <div class="alert-pip"></div>
+            <div class="alert-text"><strong>Amoxicillin 500mg</strong> &mdash; Batch B-2291 expires in 6 days. 240 units at risk.</div>
+          </div>
+          <div class="alert-row" style="background: var(--gold-dim); border-color: rgba(200,184,154,0.2);">
+            <div class="alert-pip" style="background: var(--gold);"></div>
+            <div class="alert-text"><strong>Metformin 850mg</strong> &mdash; Expiring in 20 days. 560 units.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MEDICINE INVENTORY ══ -->
+<section id="inventory" class="wrap wrap-dark wrap-border private-section">
+  <div class="inventory-top">
+    <div class="inv-left">
+      <div class="eyebrow-sm">Medicine Inventory</div>
+      <h2 class="sh">Track every batch, <em>down to the unit.</em></h2>
+    </div>
+    <div class="inv-right">
+      <div class="search-container" aria-label="Medicine search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search medicines or batch&hellip;" oninput="searchInventory()" />
+      </div>
+      <button class="btn-fill login-required" style="display:none;" onclick="openModal('addMedOverlay')">+ Add Medicine</button>
+    </div>
+  </div>
+  <div class="inventory-section">
+    <div class="batch-visual inventory-card reveal">
+      <div class="bv-header">
+        <span class="bv-title">Current Stock</span>
+        <span class="bv-count" id="totalMedCount">1,284 Total Medicines</span>
+      </div>
+      <div class="bv-row head">
+        <span>Medicine</span><span>Batch</span><span>Qty</span><span>Expires</span><span>Actions</span>
+      </div>
+      <div id="inventoryRows">
+        <div class="bv-row">
+          <span class="bv-med">Paracetamol 500mg</span>
+          <span class="bv-batch">P-3310</span>
+          <span class="bv-qty">400</span>
+          <span class="bv-pill exp-ok">Dec 2026</span>
+          <span class="sell-actions">
+            <label class="sell-count">
+              <span>Qty</span>
+              <input type="number" min="1" value="1" class="sell-qty-input" disabled>
+            </label>
+            <button class="btn-sell" onclick="openAuth('login')">Sell</button>
+            <button class="btn-delete" onclick="openAuth('login')">Delete</button>
+          </span>
+        </div>
+        <div class="bv-row">
+          <span class="bv-med">Ibuprofen 400mg</span>
+          <span class="bv-batch">I-0887</span>
+          <span class="bv-qty">85</span>
+          <span class="bv-pill exp-soon">May 2025</span>
+          <span class="sell-actions">
+            <label class="sell-count">
+              <span>Qty</span>
+              <input type="number" min="1" value="1" class="sell-qty-input" disabled>
+            </label>
+            <button class="btn-sell" onclick="openAuth('login')">Sell</button>
+            <button class="btn-delete" onclick="openAuth('login')">Delete</button>
+          </span>
+        </div>
+        <div class="bv-row">
+          <span class="bv-med">Amoxicillin 500mg</span>
+          <span class="bv-batch">B-2291</span>
+          <span class="bv-qty">240</span>
+          <span class="bv-pill exp-bad">6 days!</span>
+          <span class="sell-actions">
+            <label class="sell-count">
+              <span>Qty</span>
+              <input type="number" min="1" value="1" class="sell-qty-input" disabled>
+            </label>
+            <button class="btn-sell" onclick="openAuth('login')">Sell</button>
+            <button class="btn-delete" onclick="openAuth('login')">Delete</button>
+          </span>
+        </div>
+        <div class="bv-row">
+          <span class="bv-med">Metformin 850mg</span>
+          <span class="bv-batch">M-0089</span>
+          <span class="bv-qty">560</span>
+          <span class="bv-pill exp-soon">Jan 2025</span>
+          <span class="sell-actions">
+            <label class="sell-count">
+              <span>Qty</span>
+              <input type="number" min="1" value="1" class="sell-qty-input" disabled>
+            </label>
+            <button class="btn-sell" onclick="openAuth('login')">Sell</button>
+            <button class="btn-delete" onclick="openAuth('login')">Delete</button>
+          </span>
+        </div>
+        <div class="bv-row">
+          <span class="bv-med">Cetirizine 10mg</span>
+          <span class="bv-batch">C-1120</span>
+          <span class="bv-qty">1,200</span>
+          <span class="bv-pill exp-ok">Mar 2027</span>
+          <span class="sell-actions">
+            <label class="sell-count">
+              <span>Qty</span>
+              <input type="number" min="1" value="1" class="sell-qty-input" disabled>
+            </label>
+            <button class="btn-sell" onclick="openAuth('login')">Sell</button>
+            <button class="btn-delete" onclick="openAuth('login')">Delete</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SALES & PROFIT ══ -->
+<section id="sales" class="wrap wrap-border private-section">
+  <div class="sales-section">
+    <div>
+      <div class="eyebrow-sm">Sales & Financials</div>
+      <h2 class="sh" style="margin-bottom:1.5rem;">Performance <em>at a glance.</em></h2>
+      <p class="body-text">
+        Monitor your daily sales, profit margins, and financial health seamlessly. Your sales data automatically synchronizes with the inventory to prevent overselling while keeping your books perfectly accurate.
+      </p>
+      <br>
+      <div class="metric-row">
+        <div class="mc">
+          <div class="mc-val" id="salesRevenue">$14,250</div>
+          <div class="mc-label">Revenue (This Week)</div>
+          <span class="mc-tag t-green" id="salesRevenueMeta">7D Total</span>
+        </div>
+        <div class="mc">
+          <div class="mc-val" id="salesProfit">$3,840</div>
+          <div class="mc-label">Estimated Profit (This Week)</div>
+          <span class="mc-tag t-green" id="salesProfitMeta">25% Model</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-shell reveal">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">Revenue vs profit (weekly)</div>
+          <div class="chart-sub">A clean view of cashflow: revenue columns, profit line, and margin band&mdash;so decisions are obvious.</div>
+        </div>
+        <div class="chip-row" aria-label="Finance KPIs">
+          <div class="chip">est. margin <strong id="salesMargin">25.0%</strong></div>
+          <div class="chip">stock on hand <strong id="salesTotalItems">48,720</strong></div>
+          <div class="chip">top sku <strong id="salesTopSku">Paracetamol</strong></div>
+        </div>
+      </div>
+      <div id="salesPerformanceChart" class="chart-canvas" style="height:320px;"></div>
+      <noscript><div style="padding:0.75rem 0;color:var(--muted);font-size:0.8rem;">Enable JavaScript to view the chart.</div></noscript>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SUPPLIERS ══ -->
+<section id="suppliers" class="wrap wrap-dark wrap-border private-section">
+  <div style="margin-bottom:3rem;">
+    <div class="eyebrow-sm">Supplier Network</div>
+    <h2 class="sh">Manage the source <em>of your stock.</em></h2>
+  </div>
+  <div class="suppliers-grid">
+    <div class="supplier-card">
+      <div class="supp-name">PharmaCorp Global</div>
+      <span class="supp-cat">1200 Healthway Drive, NYC</span>
+      <div class="supp-detail">
+        <span class="supp-lbl">Contact</span>
+        <span class="supp-val">(800) 555-0199</span>
+      </div>
+      <div class="supp-detail">
+        <span class="supp-lbl">Next Delivery</span>
+        <span class="supp-val" style="color:var(--accent-light);">Tomorrow, 10 AM</span>
+      </div>
+    </div>
+    <div class="supplier-card">
+      <div class="supp-name">Medisupply Co.</div>
+      <span class="supp-cat">88 Medical Plaza, Chicago</span>
+      <div class="supp-detail">
+        <span class="supp-lbl">Contact</span>
+        <span class="supp-val">(888) 123-4567</span>
+      </div>
+      <div class="supp-detail">
+        <span class="supp-lbl">Next Delivery</span>
+        <span class="supp-val" style="color:var(--muted);">Oct 24, 2026</span>
+      </div>
+    </div>
+    <div class="supplier-card">
+      <div class="supp-name">HealthLink Direct</div>
+      <span class="supp-cat">Local Warehouse, NJ</span>
+      <div class="supp-detail">
+        <span class="supp-lbl">Contact</span>
+        <span class="supp-val">(201) 555-8833</span>
+      </div>
+      <div class="supp-detail">
+        <span class="supp-lbl">Next Delivery</span>
+        <span class="supp-val" style="color:var(--accent-light);">Oct 18, 2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section id="reviews" class="wrap wrap-border">
+  <div class="row-header">
+    <h2 class="sh">Built for the people<br/>who run <em>pharmacies.</em></h2>
+  </div>
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="trust-quote">"Before Mednifi, we discovered expired stock only when a customer complained. Now we get alerts a month in advance. That alone changed everything."</p>
+      <div class="trust-author">Ravi M. · Pharmacy Owner</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="trust-quote">"The batch tracking is the feature I didn't know I needed. Knowing exactly which 240 units expire in 6 days — not just that I have 300 units of something — is a completely different level of control."</p>
+      <div class="trust-author">Priya L. · Head Pharmacist</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="trust-quote">"We stopped running out of fast-moving stock completely. The low stock alerts give us enough lead time to reorder — it genuinely runs smoother than any system we've had."</p>
+      <div class="trust-author">James K. · Store Manager</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-wrap">
+  <div class="cta-eyebrow">Get Started</div>
+  <h2 class="cta-title">
+    Stop finding problems<br/><em>after</em> they happen.
+  </h2>
+  <p class="cta-body">
+    Mednifi gives your pharmacy the visibility and alerts it needs to prevent expired sales, avoid stockouts, and run with confidence — every single day.
+  </p>
+  <a href="#" class="btn-dark auth-trigger" data-mode="register">Register Now</a>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft">
+    <div>
+      <div class="fl-wrap">
+        <div class="logo-leaf" style="width:20px;height:20px;">
+          <svg viewBox="0 0 26 26" fill="none">
+            <path d="M13 2 C13 2 22 8 22 16 C22 21 18 24 13 24 C8 24 4 21 4 16 C4 8 13 2 13 2Z"
+              fill="rgba(59,94,58,0.5)" stroke="rgba(139,174,135,0.7)" stroke-width="0.75"/>
+            <line x1="13" y1="7" x2="13" y2="23" stroke="rgba(139,174,135,0.4)" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <span class="fl-text">Med<em>nifi</em></span>
+      </div>
+      <p class="ft-tagline">Smart pharmacy operations — preventing expired sales, avoiding stockouts, and keeping inventory under control.</p>
+    </div>
+    <div>
+      <div class="ft-tag">Product</div>
+      <ul class="ft-links">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Batch Tracking</a></li>
+        <li><a href="#">Medicine Management</a></li>
+        <li><a href="#">Sales System</a></li>
+        <li><a href="#">Alert Center</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-tag">Intelligence</div>
+      <ul class="ft-links">
+        <li><a href="#">Expiry Alerts</a></li>
+        <li><a href="#">Low Stock Alerts</a></li>
+        <li><a href="#">Analytics</a></li>
+        <li><a href="#">Reports & Export</a></li>
+        <li><a href="#">Supplier Management</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-tag">Project</div>
+      <ul class="ft-links">
+        <li><a href="#">About Mednifi</a></li>
+        <li><a href="#">How It Works</a></li>
+        <li><a href="#">Documentation</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-legal">© 2025 Mednifi · Smart Pharmacy Operations · Built for safer, more efficient pharmacies.</div>
+    <div class="ft-social">
+      <a href="#">GitHub</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Demo</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const nav = document.querySelector('nav');
+  const setNav = () => {
+    const y = window.scrollY || 0;
+    if (!nav) return;
+    nav.classList.toggle('nav-scrolled', y > 40);
+  };
+  setNav();
+  window.addEventListener('scroll', setNav, { passive: true });
+})();
+
+(function () {
+  const els = Array.from(document.querySelectorAll('.reveal'));
+  if (!('IntersectionObserver' in window)) {
+    els.forEach((el) => el.classList.add('is-in'));
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+  );
+  els.forEach((el) => io.observe(el));
+})();
+
+function money(v) {
+  return '$' + Math.round(v).toLocaleString();
+}
+
+let opsChart = null;
+let salesChart = null;
+let inventoryData = [];
+
+function parseDateOnly(value) {
+  const raw = String(value || '').slice(0, 10);
+  const parts = raw.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function formatDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function normalizeSalesChartData(rows) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const revenueByDate = new Map(
+    (Array.isArray(rows) ? rows : []).map((row) => [
+      String(row.date || '').slice(0, 10),
+      Number(row.revenue || 0)
+    ])
+  );
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const day = addDays(today, index - 6);
+    const key = formatDateKey(day);
+    return {
+      label: day.toLocaleDateString(undefined, { weekday: 'short' }),
+      revenue: revenueByDate.get(key) || 0
+    };
+  });
+}
+
+function getNiceAxisConfig(values, { minTicks = 3, maxTicks = 5 } = {}) {
+  const numericValues = values.map((value) => Number(value || 0));
+  const maxValue = Math.max(0, ...numericValues);
+
+  if (maxValue <= 0) {
+    return { min: 0, max: 1, tickAmount: 1 };
+  }
+
+  const roughTickCount = Math.max(minTicks, Math.min(maxTicks, maxValue <= 5 ? maxValue : 4));
+  const rawStep = maxValue / roughTickCount;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
+  const normalized = rawStep / magnitude;
+
+  let niceStep = magnitude;
+  if (normalized > 5) niceStep = 10 * magnitude;
+  else if (normalized > 2) niceStep = 5 * magnitude;
+  else if (normalized > 1) niceStep = 2 * magnitude;
+
+  const niceMax = Math.max(niceStep, Math.ceil(maxValue / niceStep) * niceStep);
+  const tickAmount = Math.max(1, Math.round(niceMax / niceStep));
+
+  return { min: 0, max: niceMax, tickAmount };
+}
+
+function getInventoryHealth(meds) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Array.from({ length: 7 }, (_, offset) => {
+    const day = addDays(today, offset);
+    const windowEnd = addDays(day, 30);
+    return {
+      label: day.toLocaleDateString(undefined, { weekday: 'short' }),
+      expiringCount: meds.filter((m) => {
+        const expiry = parseDateOnly(m.expiry_date);
+        return expiry && expiry >= day && expiry <= windowEnd;
+      }).length,
+      lowStockCount: meds.filter((m) => Number(m.stock_quantity) < 20).length
+    };
+  });
+}
+
+function renderInventoryHealthChart(health) {
+  const container = document.getElementById('dashboardOpsChart');
+  if (!container || !health.length) return;
+
+  const expSeries = health.map(day => Number(day.expiringCount || 0));
+  const lowSeries = health.map(day => Number(day.lowStockCount || 0));
+  const labels = health.map(day => day.label);
+  const axis = getNiceAxisConfig([...expSeries, ...lowSeries], { minTicks: 2, maxTicks: 4 });
+
+  if (window.ApexCharts) {
+    const options = {
+      chart: {
+        type: 'area',
+        height: 270,
+        toolbar: { show: false },
+        background: 'transparent',
+        foreColor: 'rgba(245,240,232,0.72)',
+        fontFamily: "'DM Sans', sans-serif",
+        animations: {
+          enabled: true,
+          easing: 'easeinout',
+          speed: 900,
+          animateGradually: { enabled: true, delay: 90 },
+          dynamicAnimation: { enabled: true, speed: 700 }
+        }
+      },
+      colors: ['#8BAE87', '#C8B89A'],
+      series: [
+        { name: 'Expiring soon', data: expSeries },
+        { name: 'Low stock', data: lowSeries }
+      ],
+      stroke: { curve: 'smooth', width: 3, lineCap: 'round' },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 0.8,
+          opacityFrom: 0.34,
+          opacityTo: 0.04,
+          stops: [0, 75, 100]
+        }
+      },
+      dataLabels: { enabled: false },
+      markers: {
+        size: 5,
+        strokeWidth: 2,
+        strokeColors: ['#0E0E0C'],
+        hover: { size: 7 }
+      },
+      grid: {
+        borderColor: 'rgba(245,240,232,0.08)',
+        strokeDashArray: 3,
+        padding: { left: 28, right: 14, top: 16, bottom: 4 }
+      },
+      xaxis: {
+        categories: labels,
+        tickPlacement: 'on',
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        labels: {
+          style: { colors: 'rgba(245,240,232,0.6)', fontSize: '11px', fontWeight: 600 }
+        }
+      },
+      yaxis: {
+        min: axis.min,
+        max: axis.max,
+        tickAmount: axis.tickAmount,
+        labels: {
+          formatter: (value) => Math.round(value).toString(),
+          minWidth: 44,
+          maxWidth: 44,
+          offsetX: -4,
+          style: { colors: 'rgba(245,240,232,0.58)', fontSize: '11px' }
+        }
+      },
+      tooltip: {
+        theme: 'dark',
+        shared: true,
+        intersect: false,
+        y: [
+          { formatter: (value) => `${Math.round(value)} expiring alerts` },
+          { formatter: (value) => `${Math.round(value)} low-stock alerts` }
+        ]
+      },
+      legend: {
+        position: 'bottom',
+        horizontalAlign: 'center',
+        labels: { colors: 'rgba(245,240,232,0.76)' },
+        markers: { radius: 12 },
+        itemMargin: { horizontal: 12, vertical: 6 }
+      }
+    };
+
+    if (!opsChart) {
+      container.innerHTML = '';
+      opsChart = new ApexCharts(container, options);
+      opsChart.render();
+    } else {
+      opsChart.updateOptions({
+        xaxis: { categories: labels },
+        yaxis: {
+          min: axis.min,
+          max: axis.max,
+          tickAmount: axis.tickAmount
+        }
+      }, true, true);
+      opsChart.updateSeries(options.series, true);
+    }
+    return;
+  }
+
+  const maxValue = Math.max(1, ...expSeries, ...lowSeries);
+  const width = 760;
+  const height = 232;
+  const pad = { left: 44, right: 18, top: 18, bottom: 42 };
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+  const x = (index) => pad.left + (plotW * index) / Math.max(1, labels.length - 1);
+  const y = (value) => pad.top + plotH - (plotH * value) / maxValue;
+  const points = (series) => series.map((value, index) => `${x(index)},${y(value)}`).join(' ');
+  const area = (series) => `${pad.left},${pad.top + plotH} ${points(series)} ${pad.left + plotW},${pad.top + plotH}`;
+  const ticks = Array.from({ length: maxValue + 1 }, (_, value) => value);
+
+  container.innerHTML = `
+    <svg class="ops-inline-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Inventory health chart">
+      ${ticks.map(value => `
+        <g>
+          <line x1="${pad.left}" y1="${y(value)}" x2="${pad.left + plotW}" y2="${y(value)}" stroke="rgba(245,240,232,0.08)" stroke-dasharray="4 5"/>
+          <text x="${pad.left - 16}" y="${y(value) + 4}" fill="rgba(245,240,232,0.68)" font-size="13" text-anchor="end">${value}</text>
+        </g>
+      `).join('')}
+      <polygon points="${area(lowSeries)}" fill="rgba(200,184,154,0.12)"/>
+      <polygon points="${area(expSeries)}" fill="rgba(139,174,135,0.12)"/>
+      <polyline points="${points(expSeries)}" fill="none" stroke="#8BAE87" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="${points(lowSeries)}" fill="none" stroke="#C8B89A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      ${expSeries.map((value, index) => `<circle cx="${x(index)}" cy="${y(value)}" r="4.5" fill="#8BAE87" stroke="#151510" stroke-width="2"/>`).join('')}
+      ${lowSeries.map((value, index) => `<circle cx="${x(index)}" cy="${y(value)}" r="4.5" fill="#C8B89A" stroke="#151510" stroke-width="2"/>`).join('')}
+      ${labels.map((label, index) => `<text x="${x(index)}" y="${height - 12}" fill="rgba(245,240,232,0.62)" font-size="13" text-anchor="middle">${label}</text>`).join('')}
+    </svg>
+    <div class="ops-inline-legend">
+      <span><i class="exp"></i>Expiring soon</span>
+      <span><i class="low"></i>Low stock</span>
+    </div>
+  `;
+}
+
+function bootCharts() {
+  if (!window.ApexCharts) return false;
+
+  const common = {
+    chart: {
+      animations: { enabled: true, easing: 'easeinout', speed: 900 },
+      toolbar: { show: false },
+      foreColor: 'rgba(245,240,232,0.72)',
+      fontFamily: "'DM Sans', sans-serif",
+      background: 'transparent',
+    },
+    grid: {
+      borderColor: 'rgba(245,240,232,0.08)',
+      strokeDashArray: 3,
+      padding: { left: 42, right: 15, top: 10, bottom: 5 },
+    },
+    tooltip: { 
+      theme: 'dark',
+      x: { show: true },
+      style: { fontSize: '12px' }
+    },
+    legend: { 
+      labels: { colors: 'rgba(245,240,232,0.72)' },
+      itemMargin: { horizontal: 10, vertical: 5 }
+    },
+    xaxis: {
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { 
+        style: { colors: 'rgba(245,240,232,0.55)', fontSize: '10px', fontWeight: 500 },
+        offsetY: 2,
+        rotate: 0,
+        hideOverlappingLabels: true
+      },
+    },
+    yaxis: {
+      labels: { 
+        minWidth: 84,
+        maxWidth: 84,
+        offsetX: -8,
+        style: { colors: 'rgba(245,240,232,0.55)', fontSize: '10px' }
+      },
+    },
+  };
+
+  // Start with the backup page's visual chart state, then replace it with live data after login.
+  const dEl = document.querySelector('#dashboardOpsChart');
+  if (dEl && !opsChart) {
+    const dOpt = {
+      ...common,
+      chart: { ...common.chart, type: 'area', height: 270 },
+      stroke: { curve: 'smooth', width: 3 },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 0.8,
+          opacityFrom: 0.35,
+          opacityTo: 0.02,
+          stops: [0, 70, 100],
+        },
+      },
+      colors: ['#8BAE87', '#C8B89A'],
+      series: [
+        { name: 'Expiring soon', data: [26, 29, 28, 31, 30, 33, 31] },
+        { name: 'Low stock', data: [12, 13, 12, 14, 13, 15, 14] }
+      ],
+      dataLabels: { enabled: false },
+      markers: {
+        size: 4,
+        strokeWidth: 2,
+        strokeColors: ['#0E0E0C'],
+        hover: { size: 6 },
+      },
+      xaxis: { 
+        ...common.xaxis, 
+        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        tickPlacement: 'on'
+      },
+      yaxis: { labels: { formatter: (v) => Math.round(v).toString() } },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: [{ formatter: (v) => Math.round(v) + ' items' }, { formatter: (v) => Math.round(v) + ' items' }],
+      },
+    };
+    try {
+      opsChart = new ApexCharts(dEl, dOpt);
+      opsChart.render();
+    } catch (_) {}
+  }
+
+    // Sales section: revenue + profit trend lines
+  const sEl = document.querySelector('#salesPerformanceChart');
+  if (sEl && !salesChart) {
+    const sOpt = {
+      ...common,
+      chart: { 
+        ...common.chart, 
+        type: 'line',
+        height: 280, 
+        stacked: false,
+        dropShadow: {
+          enabled: true,
+          top: 8,
+          left: 0,
+          blur: 12,
+          opacity: 0.15
+        }
+      },
+      colors: ['#8BAE87', '#C8B89A'],
+      series: [
+        { name: 'Revenue', data: [10850, 12120, 11240, 13990, 14720, 14250] },
+        { name: 'Profit', data: [2740, 3120, 2860, 3580, 3960, 3840] },
+      ],
+      stroke: { curve: 'smooth', width: 3, lineCap: 'round' },
+      fill: {
+        type: 'solid',
+        opacity: 1
+      },
+      dataLabels: { enabled: false },
+      markers: { 
+        size: 5, 
+        strokeWidth: 2, 
+        strokeColors: ['#0E0E0C', '#0E0E0C'],
+        hover: { size: 7 }
+      },
+      xaxis: { 
+        ...common.xaxis, 
+        categories: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4', 'Wk 5', 'Wk 6'],
+        tickPlacement: 'on'
+      },
+      yaxis: { 
+        labels: { 
+          formatter: (v) => '$' + Math.round(v).toLocaleString(),
+          style: { colors: 'rgba(245,240,232,0.55)' }
+        } 
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: [
+          { formatter: (v) => '$' + v.toLocaleString() },
+          { formatter: (v) => '$' + v.toLocaleString() },
+        ],
+      },
+      legend: { 
+        position: 'top', 
+        horizontalAlign: 'left', 
+        offsetY: -10,
+        labels: { colors: 'rgba(245,240,232,0.72)' },
+        markers: {
+          offsetX: -4
+        }
+      },
+    };
+    try {
+      salesChart = new ApexCharts(sEl, sOpt);
+      salesChart.render();
+    } catch (_) {}
+  }
+
+  return true;
+}
+
+(function () {
+  const ok = bootCharts();
+  if (ok) return;
+  let tries = 0;
+  const t = setInterval(() => {
+    tries += 1;
+    if (bootCharts() || tries > 18) clearInterval(t);
+  }, 120);
+})();
+
+const API_URL = 'http://localhost:5000/api';
+let currentUser = JSON.parse(localStorage.getItem('user'));
+let authToken = localStorage.getItem('token');
+let latestAlerts = [];
+let analyticsRequestSeq = 0;
+let inventoryRequestSeq = 0;
+
+// --- UTILS ---
+function updateUI() {
+  const isLoggedIn = !!authToken;
+  
+  // Update visibility of login/logout required elements
+  document.querySelectorAll('.login-required').forEach(el => el.style.display = isLoggedIn ? 'block' : 'none');
+  document.querySelectorAll('.logout-required').forEach(el => el.style.display = isLoggedIn ? 'none' : 'block');
+  document.querySelectorAll('.private-section').forEach((el) => {
+    el.style.display = isLoggedIn ? 'block' : 'none';
+  });
+  
+  // Update auth triggers (Login/Logout buttons)
+  document.querySelectorAll('.auth-trigger').forEach(btn => {
+    const mode = btn.getAttribute('data-mode') || 'login';
+    const isRegisterAction = mode === 'register';
+    const isHeroCta = btn.id === 'heroCtaBtn';
+
+    btn.onclick = (e) => {
+      e.preventDefault();
+      if (isLoggedIn) {
+        if (isRegisterAction || isHeroCta) {
+          const salesSection = document.getElementById('sales');
+          if (salesSection) salesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          logout();
+        }
+        return;
+      }
+
+      openAuth(mode);
+    };
+    if (isLoggedIn) {
+      btn.textContent = isHeroCta ? 'Check Sales' : (isRegisterAction ? 'Dashboard' : 'Logout');
+      if (isHeroCta) {
+        btn.setAttribute('href', '#sales');
+      }
+      if (btn.id === 'footerCtaBtn') {
+        btn.setAttribute('href', '#dashboard');
+      }
+    } else {
+      btn.textContent = isHeroCta ? 'Register Now' : (mode === 'login' ? 'Sign In' : 'Get Started');
+      if (isHeroCta) {
+        btn.setAttribute('href', '#');
+      }
+      if (btn.id === 'footerCtaBtn') {
+        btn.setAttribute('href', '#hero');
+      }
+    }
+  });
+
+  // Keep nav visible; if logged out, private links open login modal.
+  document.querySelectorAll('.private-nav-link').forEach((link) => {
+    link.onclick = (e) => {
+      if (isLoggedIn) return;
+      e.preventDefault();
+      openAuth('login');
+    };
+  });
+
+  if (isLoggedIn) {
+    latestAlerts = [];
+    clearDashboardState();
+    loadInventory();
+    loadAnalytics();
+    renderNotificationPanel();
+  } else {
+    latestAlerts = [];
+    clearDashboardState();
+    renderNotificationPanel();
+  }
+}
+
+function resetMetrics() {
+  const ids = ['dashTotalMeds', 'dashTotalStock', 'dashLowStock', 'dashExpiring', 'salesRevenue', 'salesProfit'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = id.includes('Revenue') || id.includes('Profit') ? '$0' : '0';
+  });
+}
+
+function clearDashboardState() {
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  resetMetrics();
+  setText('salesTotalItems', '0');
+  setText('salesTopSku', 'N/A');
+  setText('salesMargin', '0.0%');
+  setText('salesRevenueMeta', '7D Total');
+  setText('salesProfitMeta', '25% Model');
+  setText('chipExpiring', '0');
+  setText('chipLowStock', '0');
+  setText('chipHealthy', '0');
+
+  const dashboardAlertsContainer = document.getElementById('dashboardAlertsContainer');
+  if (dashboardAlertsContainer) {
+    dashboardAlertsContainer.innerHTML = '<div class="alert-text">No active alerts. Inventory is healthy.</div>';
+  }
+  if (allAlertsRows) {
+    allAlertsRows.innerHTML = '<div class="all-alerts-empty">No active alerts right now.</div>';
+  }
+
+  renderInventoryHealthChart(getInventoryHealth([]));
+}
+
+function logout() {
+  if (!confirm('Are you sure you want to logout?')) return;
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  authToken = null;
+  currentUser = null;
+  updateUI();
+  window.location.reload(); // Hard refresh to clear all states
+}
+
+// --- MODALS ---
+function refreshBodyScrollLock() {
+  const hasActiveModal = document.querySelector('.auth-overlay.active');
+  document.body.style.overflow = hasActiveModal ? 'hidden' : '';
+}
+
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.add('active');
+    refreshBodyScrollLock();
+  }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('active');
+    refreshBodyScrollLock();
+  }
+}
+
+function goToDashboard() {
+  closeModal('allAlertsOverlay');
+  if (notifPanel) {
+    notifPanel.classList.remove('active');
+  }
+  const dashboardSection = document.getElementById('dashboard');
+  if (dashboardSection) {
+    dashboardSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// --- AUTH ---
+const authOverlay = document.getElementById('authOverlay');
+const authModal = document.getElementById('authModal');
+const authForm = document.getElementById('authForm');
+const authSwitch = document.getElementById('authSwitch');
+const closeAuth = document.getElementById('closeAuth');
+const addMedOverlay = document.getElementById('addMedOverlay');
+const allAlertsOverlay = document.getElementById('allAlertsOverlay');
+const allAlertsRows = document.getElementById('allAlertsRows');
+const notifBell = document.getElementById('notifBell');
+const notifPanel = document.getElementById('notifPanel');
+const notifList = document.getElementById('notifList');
+
+function renderNotificationPanel() {
+  if (!notifList || !notifBell) return;
+  if (!authToken) {
+    notifList.innerHTML = '<div class="notif-empty">Sign in to view real-time pharmacy alerts.</div>';
+    notifBell.classList.remove('has-alert');
+    return;
+  }
+
+  if (!latestAlerts.length) {
+    notifList.innerHTML = '<div class="notif-empty">No active alerts. Inventory is healthy.</div>';
+    notifBell.classList.remove('has-alert');
+    return;
+  }
+
+  notifBell.classList.add('has-alert');
+  const panelAlerts = latestAlerts.slice(0, 3);
+  const hasMore = latestAlerts.length > panelAlerts.length;
+  notifList.innerHTML = `${panelAlerts.map((alert) => `
+    <div class="notif-item">
+      <div class="notif-item-title">${alert.title}</div>
+      <div class="notif-item-body">${alert.body}</div>
+    </div>
+  `).join('')}` + (hasMore ? `<a class="notif-more-btn" href="#dashboard" onclick="goToDashboard(); return false;">More</a>` : '');
+}
+
+if (notifBell && notifPanel) {
+  notifBell.onclick = (e) => {
+    e.preventDefault();
+    notifPanel.classList.toggle('active');
+  };
+
+  document.addEventListener('click', (e) => {
+    if (!notifPanel.classList.contains('active')) return;
+    const insidePanel = notifPanel.contains(e.target);
+    const clickedBell = notifBell.contains(e.target);
+    if (!insidePanel && !clickedBell) notifPanel.classList.remove('active');
+  });
+}
+
+function openAuth(mode = 'login') {
+  if (!authModal) return;
+  authModal.setAttribute('data-auth-mode', mode);
+  openModal('authOverlay');
+}
+
+if (closeAuth) {
+  closeAuth.onclick = () => closeModal('authOverlay');
+}
+
+[authOverlay, addMedOverlay, allAlertsOverlay].forEach((overlay) => {
+  if (!overlay) return;
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      refreshBodyScrollLock();
+    }
+  });
+});
+
+if (authSwitch) {
+  authSwitch.onclick = (e) => {
+    e.preventDefault();
+    const current = authModal.getAttribute('data-auth-mode');
+    authModal.setAttribute('data-auth-mode', current === 'login' ? 'register' : 'login');
+  };
+}
+
+if (authForm) {
+  authForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const mode = authModal.getAttribute('data-auth-mode');
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+    const name = document.getElementById('regName') ? document.getElementById('regName').value : '';
+
+    if (!email || !password || (mode === 'register' && !name)) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const endpoint = mode === 'login' ? '/login' : '/register';
+    const pharmacyName = document.getElementById('regName') ? document.getElementById('regName').value.trim() : '';
+    const body = mode === 'login'
+      ? { email, password }
+      : { name, email, password, pharmacy_name: pharmacyName };
+
+    try {
+      const res = await fetch(API_URL + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Authentication failed');
+
+      if (mode === 'login') {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        authToken = data.token;
+        currentUser = data.user;
+        closeModal('authOverlay');
+        updateUI();
+      } else {
+        alert('Registration successful! Please login.');
+        authModal.setAttribute('data-auth-mode', 'login');
+      }
+    } catch (err) {
+      alert('Auth Error: ' + err.message);
+    }
+  };
+}
+
+// --- MEDICINES ---
+const addMedForm = document.getElementById('addMedForm');
+
+if (addMedForm) {
+  addMedForm.onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('medName').value;
+    const batch = document.getElementById('medBatch').value;
+    const qty = parseInt(document.getElementById('medQty').value);
+    const price = parseFloat(document.getElementById('medPrice').value);
+    const expiry = document.getElementById('medExpiry').value;
+
+    if (!name || !batch || isNaN(qty) || isNaN(price) || !expiry) {
+      alert('Please fill in all medicine details correctly.');
+      return;
+    }
+
+    const body = {
+      name,
+      batch_number: batch,
+      stock_quantity: qty,
+      price_per_unit: price,
+      expiry_date: expiry
+    };
+
+    try {
+      const res = await fetch(API_URL + '/medicines', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to save medicine');
+
+      closeModal('addMedOverlay');
+      addMedForm.reset();
+      loadInventory();
+      loadAnalytics();
+      alert('Medicine batch added successfully!');
+    } catch (err) {
+      alert('Error saving medicine: ' + err.message);
+    }
+  };
+}
+
+async function loadInventory() {
+  if (!authToken) return;
+  const requestId = ++inventoryRequestSeq;
+  const requestToken = authToken;
+  try {
+    const res = await fetch(API_URL + '/medicines', {
+      headers: { 'Authorization': `Bearer ${requestToken}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch inventory');
+    const meds = await res.json();
+    if (requestId !== inventoryRequestSeq || requestToken !== authToken) return;
+    meds.sort((a, b) => {
+      const aTime = new Date(a.created_at || 0).getTime();
+      const bTime = new Date(b.created_at || 0).getTime();
+      if (bTime !== aTime) return bTime - aTime;
+      return (b.id || 0) - (a.id || 0);
+    });
+    
+    inventoryData = meds;
+    renderInventory(inventoryData);
+  } catch (err) {
+    console.error('Inventory Error:', err);
+  }
+}
+
+function renderInventory(meds) {
+  const container = document.getElementById('inventoryRows');
+  const countEl = document.getElementById('totalMedCount');
+  if (countEl) countEl.textContent = `${meds.length} Total Medicines`;
+  
+  if (!container) return;
+  if (meds.length === 0) {
+    container.innerHTML = '<div class="bv-row"><span class="bv-med">No medicines found</span><span>-</span><span>-</span><span>-</span><span>-</span></div>';
+    return;
+  }
+
+  container.innerHTML = meds.map(m => {
+    const exp = new Date(m.expiry_date);
+    const now = new Date();
+    const diffDays = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+    const safeName = String(m.name || '').replace(/'/g, "\\'");
+    
+    let expClass = 'exp-ok';
+    if (diffDays <= 0) expClass = 'exp-bad';
+    else if (diffDays <= 30) expClass = 'exp-soon';
+
+    return `
+      <div class="bv-row">
+        <span class="bv-med">${m.name}</span>
+        <span class="bv-batch">${m.batch_number}</span>
+        <span class="bv-qty">${m.stock_quantity.toLocaleString()}</span>
+        <span class="bv-pill ${expClass}">${exp.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: '2-digit' })}</span>
+        <span class="sell-actions">
+          <label class="sell-count" for="sellQty-${m.id}">
+            <span>Qty</span>
+            <input type="number" min="1" max="${m.stock_quantity}" value="1" class="sell-qty-input" id="sellQty-${m.id}" aria-label="Sell quantity for ${m.name}">
+          </label>
+          <button onclick="sellMed(${m.id})" class="btn-sell">Sell</button>
+          <button onclick="deleteMed(${m.id}, '${safeName}')" class="btn-delete">Delete</button>
+        </span>
+      </div>
+    `;
+  }).join('');
+  container.scrollTop = 0;
+}
+
+window.searchInventory = function() {
+  const input = document.getElementById('searchInput');
+  if (!input) return;
+  const query = input.value.toLowerCase().trim();
+  if (!query) {
+    renderInventory(inventoryData);
+    return;
+  }
+
+  const filtered = inventoryData.filter(m => 
+    (m.name || '').toLowerCase().includes(query) || 
+    (m.batch_number || '').toLowerCase().includes(query)
+  );
+  renderInventory(filtered);
+};
+
+window.sellMed = async function(id) {
+  const qtyInput = document.getElementById(`sellQty-${id}`);
+  const qty = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+  if (!Number.isFinite(qty) || qty <= 0) {
+    alert('Please enter a valid quantity (minimum 1).');
+    return;
+  }
+
+  if (!confirm(`Confirm sale of ${qty} unit(s)? This will update stock and record revenue.`)) return;
+  try {
+    const res = await fetch(API_URL + '/medicines/sell', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ medicine_id: id, quantity: qty })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to record sale');
+    
+    loadInventory();
+    loadAnalytics();
+  } catch (err) {
+    alert('Sale Error: ' + err.message);
+  }
+};
+
+window.deleteMed = async function(id, name) {
+  if (!confirm(`Delete "${name}" from inventory? This will remove this batch.`)) return;
+  try {
+    const res = await fetch(`${API_URL}/medicines/${id}`, {
+      method: 'DELETE',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}` 
+      }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete medicine');
+
+    loadInventory();
+    loadAnalytics();
+  } catch (err) {
+    alert('Delete Error: ' + err.message);
+  }
+};
+
+async function loadAnalytics() {
+  if (!authToken) return;
+  const requestId = ++analyticsRequestSeq;
+  const requestToken = authToken;
+  try {
+    const res = await fetch(API_URL + '/analytics', {
+      headers: { 'Authorization': `Bearer ${requestToken}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch analytics');
+    const data = await res.json();
+    if (requestId !== analyticsRequestSeq || requestToken !== authToken) return;
+    
+    const updateText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    updateText('dashTotalStock', (data.totalStock || 0).toLocaleString());
+    updateText('salesTopSku', data.topSku);
+    
+    // Refresh medicine list to get counts and derive inventory graph from the active account's inventory
+    const medRes = await fetch(API_URL + '/medicines', { headers: { 'Authorization': `Bearer ${requestToken}` } });
+    if (!medRes.ok) throw new Error('Failed to fetch medicines');
+    const meds = await medRes.json();
+    if (requestId !== analyticsRequestSeq || requestToken !== authToken) return;
+    inventoryData = meds;
+    updateText('dashTotalMeds', meds.length);
+
+    const lowStockCount = data.lowStock.length;
+    const expiringSoonCount = data.expiring.length;
+
+    updateText('dashLowStock', lowStockCount);
+    updateText('dashExpiring', expiringSoonCount);
+    
+    const alertStockIds = new Set([
+      ...data.lowStock.map(m => m.id),
+      ...data.expiring.map(m => m.id)
+    ]);
+    updateText('chipExpiring', expiringSoonCount);
+    updateText('chipLowStock', lowStockCount);
+    updateText('chipHealthy', Math.max(0, meds.length - alertStockIds.size));
+
+    // Update sales summary + chart from the same normalized weekly series
+    const normalizedSales = normalizeSalesChartData(data.chartData);
+    const categories = normalizedSales.map(d => d.label);
+    const revenueData = normalizedSales.map(d => Number(d.revenue || 0));
+    const profitData = revenueData.map(r => r * 0.25); // Assume 25% profit margin
+    const weeklyRevenue = revenueData.reduce((sum, value) => sum + value, 0);
+    const weeklyProfit = profitData.reduce((sum, value) => sum + value, 0);
+    const marginPct = weeklyRevenue > 0 ? (weeklyProfit / weeklyRevenue) * 100 : 0;
+
+    updateText('salesRevenue', `$${weeklyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    updateText('salesProfit', `$${weeklyProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    updateText('salesTotalItems', (data.totalStock || 0).toLocaleString());
+    updateText('salesMargin', `${marginPct.toFixed(1)}%`);
+    updateText('salesRevenueMeta', '7D Total');
+    updateText('salesProfitMeta', '25% Model');
+
+    // Update Charts
+    if (salesChart) {
+      const salesAxis = getNiceAxisConfig([...revenueData, ...profitData], { minTicks: 3, maxTicks: 5 });
+
+      salesChart.updateOptions({
+        xaxis: { categories: categories },
+        yaxis: {
+          min: salesAxis.min,
+          max: salesAxis.max,
+          tickAmount: salesAxis.tickAmount,
+          labels: {
+            minWidth: 84,
+            maxWidth: 84,
+            offsetX: -8,
+            formatter: (v) => '$' + Math.round(v).toLocaleString(),
+            style: { colors: 'rgba(245,240,232,0.55)' }
+          }
+        }
+      });
+      salesChart.updateSeries([
+        { name: 'Revenue', data: revenueData },
+        { name: 'Profit', data: profitData }
+      ]);
+    }
+
+    const inventoryHealth = getInventoryHealth(meds);
+    if (expiringSoonCount > 0 && inventoryHealth.every(day => Number(day.expiringCount || 0) === 0)) {
+      inventoryHealth.forEach((day) => {
+        day.expiringCount = expiringSoonCount;
+      });
+    }
+    if (lowStockCount > 0 && inventoryHealth.every(day => Number(day.lowStockCount || 0) === 0)) {
+      inventoryHealth.forEach((day) => {
+        day.lowStockCount = lowStockCount;
+      });
+    }
+    renderInventoryHealthChart(inventoryHealth);
+
+    // Update alert data for dashboard + nav notification bell
+    const dashAlertsContainer = document.getElementById('dashboardAlertsContainer');
+    let dashAlertsHtml = '';
+
+    // Combine and sort alerts
+    const allAlerts = [
+      ...data.expiring.map(m => ({ type: 'danger', title: 'Expiry Risk', body: `${m.name} (Batch ${m.batch_number}) expires on ${new Date(m.expiry_date).toLocaleDateString()}.`, tag: 'Critical · Expiring' })),
+      ...data.lowStock.map(m => ({ type: 'warning', title: 'Low Stock', body: `${m.name} is running low (${m.stock_quantity} units left).`, tag: 'Warning · Reorder' }))
+    ];
+
+    latestAlerts = allAlerts;
+    renderNotificationPanel();
+
+    if (allAlerts.length === 0) {
+      dashAlertsHtml = '<div class="alert-text">No active alerts. Inventory is healthy.</div>';
+      if (allAlertsRows) {
+        allAlertsRows.innerHTML = '<div class="all-alerts-empty">No active alerts right now.</div>';
+      }
+    } else {
+      const dashboardAlerts = allAlerts.slice(0, 5);
+      const hasMore = allAlerts.length > dashboardAlerts.length;
+
+      dashboardAlerts.forEach(alert => {
+        dashAlertsHtml += `
+          <div class="alert-row" style="margin-bottom: 0.5rem; ${alert.type === 'warning' ? 'background: var(--gold-dim); border-color: rgba(200,184,154,0.2);' : ''}">
+            <div class="alert-pip" style="${alert.type === 'warning' ? 'background: var(--gold);' : ''}"></div>
+            <div class="alert-text">${alert.body}</div>
+          </div>
+        `;
+      });
+
+      if (hasMore) {
+        dashAlertsHtml += `<button class="view-more-alerts" onclick="openAllAlertsModal()">View all ${allAlerts.length} alerts</button>`;
+      }
+
+      if (allAlertsRows) {
+        allAlertsRows.innerHTML = allAlerts.map((alert) => `
+          <div class="all-alerts-row">
+            <span class="${alert.type === 'danger' ? 'all-alerts-sev-danger' : 'all-alerts-sev-warning'}">${alert.type === 'danger' ? 'Critical' : 'Warning'}</span>
+            <span>${alert.title}</span>
+            <span>${alert.body}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    if (dashAlertsContainer) dashAlertsContainer.innerHTML = dashAlertsHtml;
+
+  } catch (err) {
+    console.error('Analytics Error:', err);
+  }
+}
+
+window.openAllAlertsModal = function() {
+  openModal('allAlertsOverlay');
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  updateUI();
+  refreshBodyScrollLock();
+});
+
+</script>
+</body>
+</html>
