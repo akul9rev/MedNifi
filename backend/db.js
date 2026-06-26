@@ -4,8 +4,10 @@ require('dotenv').config();
 
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -18,8 +20,10 @@ let pool;
 async function initDatabase() {
     const bootstrapConn = await mysql.createConnection({
         host: dbConfig.host,    
+        port: dbConfig.port,
         user: dbConfig.user,
-        password: dbConfig.password
+        password: dbConfig.password,
+        ssl: dbConfig.ssl
     });
 
     await bootstrapConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
