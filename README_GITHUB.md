@@ -4,6 +4,8 @@ Mednifi is a pharmacy operations platform built to help pharmacies manage invent
 
 It combines a polished frontend, an Express API, and a MySQL database into a single full-stack project focused on operational safety and day-to-day pharmacy workflow.
 
+Website Link - https://mednifi.onrender.com
+
 ## Highlights
 
 - Batch-level medicine inventory management
